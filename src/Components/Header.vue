@@ -28,6 +28,7 @@
 </template>
 
 <script>
+    import '../../public/main.scss';
     export default {
         // methods: {
         //     navigateToHome() {
