@@ -1,17 +1,22 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import firebase from 'firebase/app';
 import App from './App.vue';
+import { firebaseApp } from './helpers/data/connection.js';
 import { routes } from './Routing/routes.js';
-
+import { store } from './Store/store.js';
+// import { mapGetters, mapActions, mapMutations } from 'vuex';
 // STYLES
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'animate.css';
 
 Vue.use(VueRouter);
 
-const router = new VueRouter({
+export const router = new VueRouter({
   routes,
   mode: 'history',
+  store,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
@@ -20,24 +25,53 @@ const router = new VueRouter({
       return { selector: to.hash }
     }
     return {x: 0, y: 0};
+  },
+  methods: {
+    updateThisUser(thisUser) {
+      this.$store.commit('updateStoreUser', thisUser);
+    }
   }
 });
 
+
 router.beforeEach((to, from, next) => {
-  // if (to.meta.requiresAuth) {
-  //   const authUser = JSON.parse(window.localStorage.getItem('authUser'))
-  //   if (authUser && authUser.access_token) {
-  //     next()
-  //   } else {
-  //     next({name: 'home'})
-  //   }
-  // }
-  next()
+  const authenticated = firebase.auth().onAuthStateChanged((user) => {
+    if (user !== null) {
+      vm.myUser = {
+        userid: user.uid,
+        email: user.email,
+        authed: true
+      }
+      // currently line below breaks code push
+      // let thisUser = vm.myUser;
+      router.push({ name: 'myHome', path: '/' });
+    } else {
+      router.push({ name: 'myLogin', path: '/login' })
+    }
+  })
+  next();
 });
 
-new Vue({
+var vm = new Vue({
     el: "#app",
     router,
-    render: h => h(App)
+    data() {
+      return {
+        myUser: {
+          userid: null,
+          email: null,
+          authed: false
+        }
+      }
+    },
+    store,
+    render: h => h(App),
+    base: firebaseApp(),
+    watchers: {
+      myUser: function() {
+        console.error('change noted');
+        router.updateThisUser(vm.myUser);
+      }
+    } 
   })
 
