@@ -17,6 +17,9 @@
                 <router-view name="myList"></router-view>
             </transition>
         </div>
+        <transition>
+            <router-view name="app-footer"></router-view>
+        </transition>
         
     </div>
 </template>

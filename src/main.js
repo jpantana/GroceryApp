@@ -6,11 +6,21 @@ import { firebaseApp } from './helpers/data/connection.js';
 import { routes } from './Routing/routes.js';
 import { store } from './Store/store.js';
 // import { mapGetters, mapActions, mapMutations } from 'vuex';
+
 // STYLES
 import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+import 'bootstrap/js/dist/dropdown';
 import 'animate.css';
+import BootstrapVue from 'bootstrap-vue'
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons'
 
+library.add(fas)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
@@ -33,7 +43,6 @@ export const router = new VueRouter({
   }
 });
 
-
 router.beforeEach((to, from, next) => {
   const authenticated = firebase.auth().onAuthStateChanged((user) => {
     if (user !== null) {
@@ -42,8 +51,6 @@ router.beforeEach((to, from, next) => {
         email: user.email,
         authed: true
       }
-      // currently line below breaks code push
-      // let thisUser = vm.myUser;
       router.push({ name: 'myHome', path: '/' });
     } else {
       router.push({ name: 'myLogin', path: '/login' })
@@ -53,7 +60,6 @@ router.beforeEach((to, from, next) => {
 });
 
 var vm = new Vue({
-    el: "#app",
     router,
     data() {
       return {
@@ -73,5 +79,5 @@ var vm = new Vue({
         router.updateThisUser(vm.myUser);
       }
     } 
-  })
+  }).$mount( '#app' );
 
