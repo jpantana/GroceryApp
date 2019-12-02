@@ -10,7 +10,7 @@ const List = resolve => {
 };
 
 export const routes = [    
-    { path: '', name: 'myHome', components: {
+    { path: '/', name: 'myHome', components: {
         default: Home,
         'header-top': Header,
         'app-footer': Footer  
