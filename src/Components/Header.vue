@@ -22,16 +22,16 @@
                         </div>
                     </router-link> -->
                     <div class="homeWrapper">
-                            <font-awesome-icon icon="home" class="faHome animated bounceIn" />
-                            <router-link 
-                                id="homeLink" 
-                                :to="{ name: 'myHome' }" 
-                                tag="li" active-class="active" 
-                                exact 
-                                style="list-style-type: none;"
-                                class="navbarLinks animated bounceIn"
-                            >
-                            Home</router-link>
+                        <font-awesome-icon icon="home" class="faHome animated bounceIn" />
+                        <router-link 
+                            id="homeLink" 
+                            :to="{ name: 'myHome' }" 
+                            tag="li" active-class="active" 
+                            exact 
+                            style="list-style-type: none;"
+                            class="navbarLinks animated bounceIn"
+                        >
+                        Home</router-link>
                     </div>
 
                     <div class="listWrapper">
