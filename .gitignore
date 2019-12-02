@@ -4,3 +4,7 @@ dist/
 npm-debug.log
 package-lock.json
 /config
+
+/src/helpers/keys/apiKeys.json
+
+firebase.json

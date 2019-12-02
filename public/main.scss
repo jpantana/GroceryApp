@@ -1,0 +1,30 @@
+$fontColorLight: rgb(255, 255, 255);
+$fontColorDark: rgb(43, 43, 43);
+$hoverLightFont: rgb(235, 232, 232);
+
+@import '../node_modules/bootstrap/scss/bootstrap';
+@import '../node_modules/bootstrap-vue/src/index.scss';
+
+$mainBlue: rgb(48, 203, 250);
+$mainWhite: rgb(255, 255, 255);
+$mainPink: rgb(255,105,180);
+
+$brandFont: 'Faster One', cursive;
+$regFont: 'Lato', sans-serif;
+$slantFont: 'Damion', cursive;
+$thickFont: 'Open Sans', sans-serif;
+
+$blueGradient: //linear-gradient(217deg, rgb(255, 255, 255), rgba(211, 206, 206, 0.906) 70.71%),
+               // linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),
+               linear-gradient(336deg, rgb(139, 220, 247), rgba(48, 203, 250, 1), rgb(175, 231, 249));
+
+$font1:'Damion', cursive;
+$font2: 'Open Sans', sans-serif;
+$font3: 'Poiret One', cursive;
+$font4: 'Allura', cursive;
+$font5: 'Covered By Your Grace', cursive;
+$font6: 'Chewy', cursive;
+$font7: 'Mr Dafoe', cursive;
+$font8: 'Rancho', cursive;
+$font9: 'Sriracha', cursive;
+$font10: 'Kristi', cursive;

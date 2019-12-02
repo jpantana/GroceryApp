@@ -1,8 +1,20 @@
 {
-    "dependencies": {
+  "dependencies": {
     "@babel/polyfill": "~7.2",
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-brands-svg-icons": "^5.11.2",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/vue-fontawesome": "^0.1.8",
+    "animate.css": "^3.7.2",
+    "bootstrap": "^4.3.1",
+    "bootstrap-vue": "^2.1.0",
+    "firebase": "^7.5.0",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.0",
+    "v-animate-css": "0.0.3",
     "vue": "~2.6",
-    "vue-router": "~3.0"
+    "vue-router": "~3.0",
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@babel/core": "~7.2",
@@ -12,21 +24,24 @@
     "@babel/plugin-syntax-dynamic-import": "~7.2",
     "@babel/plugin-syntax-import-meta": "~7.2",
     "@babel/preset-env": "~7.3",
+    "@fortawesome/fontawesome-free": "^5.11.2",
     "babel-loader": "~8.0",
+    "babel-preset-stage-2": "^6.24.1",
     "compression-webpack-plugin": "~2.0",
     "cross-env": "~5.2",
     "css-loader": "~0.28",
     "friendly-errors-webpack-plugin": "~1.7",
     "html-webpack-plugin": "~3.2",
     "mini-css-extract-plugin": "~0.5",
-    "node-sass": "~4.11",
+    "node-sass": "^4.13.0",
     "optimize-css-assets-webpack-plugin": "~3.2",
     "sass-loader": "~7.1",
     "uglifyjs-webpack-plugin": "~1.2",
     "vue-loader": "~15.6",
     "vue-style-loader": "~4.1",
+    "vue-svg-loader": "^0.15.0",
     "vue-template-compiler": "~2.6",
-    "webpack": "~4.29",
+    "webpack": "^4.29.6",
     "webpack-bundle-analyzer": "~3.0",
     "webpack-cli": "~3.2",
     "webpack-dev-server": "~3.1",
@@ -36,6 +51,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
     "staging": "cross-env NODE_ENV=staging webpack",
+    "deploy": "npm run build && firebase deploy",
     "build": "cross-env NODE_ENV=production webpack"
   }
 }
