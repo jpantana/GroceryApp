@@ -1,7 +1,8 @@
 <template>
     <div class="footer">
         <div class="contentDiv">
-            <p class="tagname">&copy; 2019 | SweetCarts ~ Make shopping together... easier | <a class="contactEmail" href="mailto:josh.pantana@gmail.com">contact us</a></p>
+            <p class="tagname">&copy; 2019 | SweetCarts ~ Make shopping together... easier | 
+                <a class="contactEmail" href="mailto:josh.pantana@gmail.com">contact us</a></p>
             
         </div>
     </div>

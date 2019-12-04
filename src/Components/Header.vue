@@ -6,7 +6,7 @@
             <!-- <p class="brandTag">shop together. stay together</p> -->
         </div>
 
-        <div class="navItemsWrapper" id="">
+        <div class="navItemsWrapper" id="navItemsWrapperId">
             <!-- SEARCH NAV -->
             <!-- <form class="">
                 <input class="" type="search" placeholder="Search" aria-label="Search">
@@ -15,51 +15,37 @@
 
             <!-- LINKS -->
             <ul class="navBtns">
-                    <!-- <router-link v-for="link in links" :key="link.id" :to="{ name: link.page }" exact style="list-style-type: none;">
-                        <div class="homeWrapper">
-                            <font-awesome-icon icon={{link.icon}} class="faHome animated bounceIn" />
-                            <a class="navbarLinks animated bounceIn">{{ link.text }}</a>
-                        </div>
-                    </router-link> -->
+                <!-- <router-link v-for="link in links" :key="link.id" :to="{ name: link.page }" exact style="list-style-type: none;">
                     <div class="homeWrapper">
-                        <font-awesome-icon icon="home" class="faHome animated bounceIn" />
-                        <router-link 
-                            id="homeLink" 
-                            :to="{ name: 'myHome' }" 
-                            tag="li" active-class="active" 
-                            exact 
-                            style="list-style-type: none;"
-                            class="navbarLinks animated bounceIn"
-                        >
-                        Home</router-link>
+                        <font-awesome-icon icon={{link.icon}} class="faHome animated bounceIn" />
+                        <a class="navbarLinks animated bounceIn">{{ link.text }}</a>
                     </div>
+                </router-link> -->
+                <div class="homeWrapper">
+                    <router-link 
+                        id="homeLink" 
+                        :to="{ name: 'myHome' }" 
+                        tag="a" 
+                        exact 
+                        class="navbarLinks animated bounceIn"
+                    >
+                    <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
+                    Home</router-link>
+                </div>
 
-                    <div class="listWrapper">
-                        <font-awesome-icon icon="list" class="faList animated bounceIn" />
-                        <router-link
-                            id="listLink" 
-                            :to="{ name: 'myList' }" 
-                            tag="li" 
-                            active-class="active" 
-                            exact 
-                            style="list-style-type: none;"
-                            class="navbarLinks animated bounceIn"
-                        >Lists
-                        </router-link>
-                    </div>
+                <div class="listWrapper">
+                    <router-link
+                        id="listLink" 
+                        :to="{ name: 'myList' }"
+                        tag="a" 
+                        exact 
+                        class="navbarLinks animated bounceIn"
+                    >
+                    <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
+                    Lists
+                    </router-link>
+                </div>
             </ul>
-
-            <!-- DROP DOWN -->
-            <!-- Bootstrap vue option. cannot remove caret and not sure why -->
-            <!-- <div class="settingsDiv">
-                <b-dropdown variant="success" right no-caret text="">    
-                    <span slot="text">Split Dropdown Button<font-awesome-icon icon="angle-down" class="faAngle" /></span>
-
-                    <b-dropdown-item href="#">Action</b-dropdown-item>
-                    <b-dropdown-item href="#">Another action</b-dropdown-item>
-                    <b-dropdown-item href="#">Something else here</b-dropdown-item>
-                </b-dropdown>
-            </div> -->
 
             <div class="dropdown settingsDiv">
                 <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
@@ -77,39 +63,22 @@
 
 <script>
     import firebase from 'firebase/app';
+    import { router } from '../main.js';
     import 'animate.css';
 
     export default {
         data() {
             return {
-                i: 0,
-                links: [
-                    {
-                        text: "Home",
-                        id: "homeLink",
-                        page: "myHome",
-                        icon: "home"
-                    },
-                    {
-                        text: "Lists",
-                        id: "listLink",
-                        page: "myList",
-                        icon: "list"
-                    }
-                ]
+                
             }
         },
         methods: {
             firebaseLogout() {
-                firebase.auth().signOut();
-            },
-            inc() {
-                this.i++;
-            }
-        },
-        events: {
-            clickedOutsideDropdown(event) {
-                this.showLeftDropdown = false;
+                firebase.auth().signOut()
+                    .then(() => {
+                        localStorage.removeItem('user-token');
+                        router.push({ name: 'myHome', path: '/' })
+                    });
             }
         }
     }
@@ -133,7 +102,7 @@
                 display: flex;
                 flex-flow: row nowrap;
                 justify-content: center;
-                margin-top: 12px;
+                margin-top: 5px;
                 .navbarLinks {
                     color: $fontColorLight;
                     font-family: $regFont;
@@ -141,6 +110,9 @@
                     font-size: 1.8em;
                     text-decoration: none;
                     letter-spacing: -.06ch;
+                    // display: flex;
+                    // flex-direction: column;
+                    // justify-content: flex-start;
                     &:hover {
                         cursor: pointer;
                     }
@@ -159,8 +131,10 @@
                     }
                     .faHome {
                         color: $fontColorLight;
-                        font-size: 27px;
+                        font-size: 37px;
                         margin: auto;
+                        position: relative;
+                        left: .5em;
                         &:hover {
                             cursor: pointer;
                         }
@@ -180,8 +154,10 @@
                     }
                     .faList {
                         color: $fontColorLight;
-                        font-size: 27px;
+                        font-size: 37px;
                         margin: auto;
+                        position: relative;
+                        left: .25em;
                         &:hover {
                             cursor: pointer;
                         }
@@ -269,6 +245,14 @@
                 margin-top: 12px;
                 .navbarLinks {
                     font-size: 1em;
+                    .faHome {
+                        font-size: 27px;
+                        left: .23em;
+                    }
+                    .faList {
+                        font-size: 27px;
+                        left: .09em;
+                    }
                 }
             }
         }
