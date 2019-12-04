@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { router } from '../main.js'
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
@@ -18,33 +19,24 @@ export const store = new Vuex.Store({
     getters: {
       userPermissions: state => {
         return state.user.token;
-
-
-      //   console.error('getter');
-      //   if (state.userToken !== '') {
-      //     firebase.auth().onAuthStateChanged((user) => {
-      //       if (user !== null) {
-      //         state.user.email = user.email
-      //         state.user.uid = user.uid
-      //         state.user.authed = true
-      //         return true;
-      //       } else {
-      //         state.user.token = ''
-      //       return false
-      //     }
-      //   });
-      // } 
-      // return false;
     }
   },
   mutations: {
     addTokenToState (state, payload) {
-      state.user.token = payload.token;
-      console.log(state);
+      localStorage.setItem('user-token', payload.token);
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user !== null) {
+          state.user.email = user.email;
+          state.user.uid = user.uid;
+          state.user.authed = true;
+          state.user.token = payload.token;
+          router.push({ name: 'myHome', path: '/' });
+        }
+      });
     },
     revokeToken (state, payload) {
+      localStorage.removeItem('user-token');
       state.user = payload;
-      console.log(state);
     }
   },
   actions: {
@@ -55,6 +47,7 @@ export const store = new Vuex.Store({
             commit('addTokenToState', {
               token: res.credential.accessToken
             });
+            router.push('/');
           });
       },
       submitNewEmailSignup: ({ commit }, payload) => {

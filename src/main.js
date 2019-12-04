@@ -26,81 +26,30 @@ Vue.use(VueRouter);
 export const router = new VueRouter({
   routes,
   mode: 'history',
-  store,
-  // scrollBehavior(to, from, savedPosition) {
-  //   if (savedPosition) {
-  //     return savedPosition;
-  //   }
-  //   if (to.hash) {
-  //     return { selector: to.hash }
-  //   }
-  //   return {x: 0, y: 0};
-  // },
-  methods: {
-
-  },
-  computed: {
-    
-  }
+  store
 });
 
+// NOT WORKING AT ALL
 router.beforeEach((to, from, next) => {
-  console.error(typeof store.getters.userPermissions);
-  if (store.getters.userPermissions !== '') {
-    console.error(store.getters.userPermissions);
+  console.error(localStorage.getItem('user-token'), to.path);
+  if (localStorage.getItem('user-token') === null) {
+    console.error('local storage true');
+    if (to.path == '/login') {
+      next();
+    } else {
+      next('/login');
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 var vm = new Vue({
     router,
     store,
-    data() {
-      return {
-        // NOT SURE I ACTUALLY NEED THIS BC OF STORE GETTER
-        // myUser: {
-        //   userid: null,
-        //   email: null,
-        //   authed: false,
-        //   token: null
-        // }
-      }
-    },
     render: h => h(App),
     base: firebaseApp(),
     methods: {
-      // MAY NOT NEED THIS METHOD DEPENDING ON STORE GETTER
-      removeUser() {
-        if (this.myUser.userid.length > 1) {
-            this.myUser = {
-            userid: '',
-            email: '',
-            authed: false
-          };
-        }
-      }
-    },
-    // beforeCreate() {
-    //   console.error('created');
-    //     const authenticated = firebase.auth().onAuthStateChanged((user) => {
-    //       // sets state in data for main instance w user. Simultaneously the store state is being updated by other means
-    //       if (user !== null) {
-    //         vm.myUser = {
-    //           userid: user.uid,
-    //           email: user.email,
-    //           authed: true,
-    //         }
-    //       }
-    //     });
-    // },
-    // ACCOMPLISHED IN STORE MUTATION
-    // watch: {
-    //   myUser: () => {
-    //     console.error(store.state.user);
-    //     store.state.user.email = vm.myUser.email;
-    //     store.state.user.uid = vm.myUser.userid;
-    //     store.state.user.authed = vm.myUser.authed;
-    //     console.log(store.state.user);
-    //   }
-    // } 
+      
+    }
   }).$mount( '#app' );

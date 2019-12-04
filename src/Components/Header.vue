@@ -15,12 +15,6 @@
 
             <!-- LINKS -->
             <ul class="navBtns">
-                <!-- <router-link v-for="link in links" :key="link.id" :to="{ name: link.page }" exact style="list-style-type: none;">
-                    <div class="homeWrapper">
-                        <font-awesome-icon icon={{link.icon}} class="faHome animated bounceIn" />
-                        <a class="navbarLinks animated bounceIn">{{ link.text }}</a>
-                    </div>
-                </router-link> -->
                 <div class="homeWrapper">
                     <router-link 
                         id="homeLink" 
@@ -111,9 +105,6 @@
                     font-size: 1.8em;
                     text-decoration: none;
                     letter-spacing: -.06ch;
-                    // display: flex;
-                    // flex-direction: column;
-                    // justify-content: flex-start;
                     &:hover {
                         cursor: pointer;
                     }
