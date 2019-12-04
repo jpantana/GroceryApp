@@ -27,160 +27,30 @@ export const router = new VueRouter({
   routes,
   mode: 'history',
   store,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    }
-    if (to.hash) {
-      return { selector: to.hash }
-    }
-    return {x: 0, y: 0};
-  },
+  // scrollBehavior(to, from, savedPosition) {
+  //   if (savedPosition) {
+  //     return savedPosition;
+  //   }
+  //   if (to.hash) {
+  //     return { selector: to.hash }
+  //   }
+  //   return {x: 0, y: 0};
+  // },
   methods: {
-    // NOT BEING CALLED
-    // updateThisUser(thisUser) {
-    //   // console.log('from router main updateThisUser fn', thisUser);
-    //   this.$store.commit('updateStoreUser', thisUser);
-    // }
+
+  },
+  computed: {
+    
   }
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(store.getters['hasPermission']);
-  if (store.getters['hasPermission'] && from.path == '/login') {
-    console.error('successful login and redirect');
-    next('/');
+  console.error(typeof store.getters.userPermissions);
+  if (store.getters.userPermissions !== '') {
+    console.error(store.getters.userPermissions);
   }
-  if (!store.getters['hasPermission'] && from.path !== '/login') {
-    console.error('you logged out');
-    next('/login');
-  }
-  if (store.getters['hasPermission'] == false) {
-    console.error('not logged in');
-  }
-  console.error('just plain next');
   next();
-
-  // const authenticated = firebase.auth().onAuthStateChanged((user) => {
-  //   console.error(to.path);
-
-  //   if (user !== null) {
-  //       // vm.myUser = {
-  //       //   userid: user.uid,
-  //       //   email: user.email,
-  //       //   authed: true
-  //       // }
-  //     router.push({ name: 'myHome', path: '/' });
-  //   } 
-  //   if (to.path === '/') {
-  //     next();
-  //     router.push({ name: 'myList', path: '/list'});
-  //   } 
-  //   else {
-  //     router.push({ name: 'myLogin', path: '/login' })
-  //   }
-  // })
-  // next();
-  // if (localStorage.getItem('user-token') === null) {
-  //   // console.error(vm.myUser);
-  //   const authenticated = firebase.auth().onAuthStateChanged((user) => {
-  //     // sets state in data for main instance w user. Simultaneously the store state is being updated by other means
-  //     if (user !== null) {
-  //       vm.myUser = {
-  //         userid: user.uid,
-  //         email: user.email,
-  //         authed: true,
-  //       };
-  //       next('/');
-  //     }
-  //     next('/login');
-  //   });
-  // } else if (localStorage.getItem('user-token') !== null) {
-  //   next();
-  // } else {
-  //   next('/login');
-  // }
-  // if (store.getters["hasPermission"]) {
-  //   next('/')
-  // } else {
-  //   next({
-  //     name: "myLogin" // back to safety route //
-  //   });
-  // }
-
-    // var hasPermission = store.getters["hasPermission"];
-    // console.error(hasPermission, to, from);
-    // if (hasPermission) {
-    //   // console.error('true from router before each');
-    //   // next();
-    // } 
-
-    // next('/login');
-    // console.error('false from router before each');
-
-  // if (localStorage.getItem('user-token')) {
-  //   console.error('there is an access token');
-    // if (to.path !== '/') {
-    //   next({
-    //     name: 'myHome'
-    //   });
-    // }
-  //   if (from.path === '/login') {
-  //     router.push({ name: 'myHome', path: '/' });
-  //   }
-  //   console.error('already logged in w token', from.path);
-  //   next();
-  // } 
-  // if (!localStorage.getItem('user-token')) {
-  //     if (to.path !== '/login') {
-  //       console.error('lets redirect with logout');
-  //       router.push({ name: 'myLogin', path: '/login' });
-  //     }
-  //     console.error('no access token, and already on /login');
-  //   next(); 
-  // }
 });
-
-// router.beforeResolve((to, from, next) => {
-//   console.error(localStorage.getItem('user-token'), routes.name, from.path);
-//   if (from.name == 'myLogin' && localStorage.getItem('user-token') !== null) {
-//     console.error('before resolve has what it needs');
-//     next('/');
-//   }
-//   if (localStorage.getItem('user-token') === null) {
-//     console.error('so it is');
-//     // next('/login');
-//   }
-//   next();
-// });
-
-//router.beforeResolve((to, from, next) => {
-  // console.error(this.store.state);
-  // if (from.name == 'myLogin' && vm.user.authed) {
-  //   console.error('authed and from mylogin');
-  //   next('/');
-  // }
-  // if (vm.user.authed) {
-  //   console.error('authed but been logged in');
-  //   next();
-  // }
-  // next();
-//});
-
-// router.beforeEach((to, from, next) => {
-
-// });
-
-// router.afterEach((to, from) => {
-//   if (to.name == 'myLogin') {
-//     console.error(to.name);
-//     // vm.removeUser();
-//     // store.state.user.email = '';
-//     // store.state.user.uid = '';
-//     // store.state.user.authed = false;
-//     // console.log(store.state.user);
-//   }
-// });
 
 var vm = new Vue({
     router,

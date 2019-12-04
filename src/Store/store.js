@@ -12,54 +12,61 @@ export const store = new Vuex.Store({
       email: null,
       uid: null,
       authed: false,
-      token: localStorage.getItem('user-token') || ''
+      token: ''
     }
   },
-  getters: {
-    hasPermission: state => {
-      if (state.user.token !== null) {
-        firebase.auth().onAuthStateChanged((user) => {
-          if (user !== null) {
-            state.user = {
-              email: user.email,
-              uid: user.uid,
-              authed: true,
-              token: localStorage.getItem('user-token')
-            }
-            // console.error(state.user);
-          } else {
-            localStorage.removeItem('user-token');
-            return false
-          }
-        });
-        return true;
-      } 
-      return false;
+    getters: {
+      userPermissions: state => {
+        return state.user.token;
+
+
+      //   console.error('getter');
+      //   if (state.userToken !== '') {
+      //     firebase.auth().onAuthStateChanged((user) => {
+      //       if (user !== null) {
+      //         state.user.email = user.email
+      //         state.user.uid = user.uid
+      //         state.user.authed = true
+      //         return true;
+      //       } else {
+      //         state.user.token = ''
+      //       return false
+      //     }
+      //   });
+      // } 
+      // return false;
     }
   },
   mutations: {
-    // NOT BEING HEARD
-    // updateStoreUser: (state, thisUser) => {
-    //   // called in main.js router const
-    //   state.user = thisUser;
-    // }
+    addTokenToState (state, payload) {
+      state.user.token = payload.token;
+      console.log(state);
+    },
+    revokeToken (state, payload) {
+      state.user = payload;
+      console.log(state);
+    }
   },
   actions: {
-      loginGEvent: ({ commit }) => {
+      loginGEvent: ({ commit }, event) => {
         const provider = new firebase.auth.GoogleAuthProvider();
-          // i want to pull auth data from firebase and set state auth to true 'ie token in local storage';
-          // then have a whether that says if true then setTimeout function to run logout if it's been say an hour
         firebase.auth().signInWithPopup(provider)
-          .then(res => localStorage.setItem('user-token',res.credential.accessToken));
+          .then(res => {
+            commit('addTokenToState', {
+              token: res.credential.accessToken
+            });
+          });
       },
       submitNewEmailSignup: ({ commit }, payload) => {
         if (payload.email.length > 1) {
-          // NProgress.start();
           const myEmail = payload.email;
           const password = payload.password;
           firebase.auth().createUserWithEmailAndPassword(myEmail, password)
-            .then(res => localStorage.setItem('user-token',res.credential.accessToken))
-            .catch(err => {
+            .then(res => {
+              commit('addTokenToState', {
+                token: res.credential.accessToken
+              });
+            }).catch(err => {
               console.error('no new user created', err);
               alert(err.message);
             });
@@ -73,13 +80,24 @@ export const store = new Vuex.Store({
           const myEmail = payload.email;
           const password = payload.password;
           firebase.auth().signInWithEmailAndPassword(myEmail, password)
-            .then(res => localStorage.setItem('user-token',res.credential.accessToken))
-            .catch((err) => {
+            .then(res => {
+              commit('addTokenToState', {
+                token: res.credential.accessToken
+              });
+            }).catch(() => {
               alert('Sorry. This email/password is incorrect');
             });
         } else {
           alert('Please enter a valid email address and password');
         }
+      },
+      signOut: ({commit}) => {
+        commit('revokeToken', {
+          authed: false,
+          uid: null,
+          email: null,
+          token: null
+        });
       }
   }
 });

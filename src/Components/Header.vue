@@ -63,6 +63,7 @@
 
 <script>
     import firebase from 'firebase/app';
+    import store from 'vuex';
     import { router } from '../main.js';
     import 'animate.css';
 
@@ -76,8 +77,8 @@
             firebaseLogout() {
                 firebase.auth().signOut()
                     .then(() => {
-                        localStorage.removeItem('user-token');
-                        router.push({ name: 'myHome', path: '/' })
+                        this.$store.dispatch('signOut');
+                        router.push({ name: 'myLogin', path: '/login' })
                     });
             }
         }
