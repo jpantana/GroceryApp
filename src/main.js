@@ -14,7 +14,7 @@ import 'animate.css';
 import BootstrapVue from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { fas } from '@fortawesome/free-solid-svg-icons'
+import { fas, faOm } from '@fortawesome/free-solid-svg-icons'
 
 library.add(fas)
 
@@ -26,58 +26,28 @@ Vue.use(VueRouter);
 export const router = new VueRouter({
   routes,
   mode: 'history',
-  store,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    }
-    if (to.hash) {
-      return { selector: to.hash }
-    }
-    return {x: 0, y: 0};
-  },
-  methods: {
-    updateThisUser(thisUser) {
-      this.$store.commit('updateStoreUser', thisUser);
-    }
-  }
+  store
 });
 
+// NOT WORKING AT ALL
 router.beforeEach((to, from, next) => {
-  const authenticated = firebase.auth().onAuthStateChanged((user) => {
-    if (user !== null) {
-      vm.myUser = {
-        userid: user.uid,
-        email: user.email,
-        authed: true
-      }
-      router.push({ name: 'myHome', path: '/' });
+  if (localStorage.getItem('user-token') === null) {
+    if (to.path == '/login') {
+      next();
     } else {
-      router.push({ name: 'myLogin', path: '/login' })
+      next('/login');
     }
-  })
-  next();
+  } else {
+    next();
+  }
 });
 
 var vm = new Vue({
     router,
-    data() {
-      return {
-        myUser: {
-          userid: null,
-          email: null,
-          authed: false
-        }
-      }
-    },
     store,
     render: h => h(App),
     base: firebaseApp(),
-    watchers: {
-      myUser: function() {
-        console.error('change noted');
-        router.updateThisUser(vm.myUser);
-      }
-    } 
+    methods: {
+      
+    }
   }).$mount( '#app' );
-

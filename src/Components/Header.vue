@@ -1,12 +1,12 @@
 <template>
-    <nav class="myNav">
+    <nav id="myNav">
         <!-- BRAND -->
         <div class="brandDiv animated rotateIn">
             <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
             <!-- <p class="brandTag">shop together. stay together</p> -->
         </div>
 
-        <div class="navItemsWrapper" id="">
+        <div class="navItemsWrapper" id="navItemsWrapperId">
             <!-- SEARCH NAV -->
             <!-- <form class="">
                 <input class="" type="search" placeholder="Search" aria-label="Search">
@@ -15,33 +15,35 @@
 
             <!-- LINKS -->
             <ul class="navBtns">
-                <li style="list-style-type: none;">
-                    <router-link to="/" tag="li" active-class="active" exact>
-                        <a class="navbarLinks">Home <span class="sr-only">(current)</span></a>
+                <div class="homeWrapper">
+                    <router-link 
+                        id="homeLink" 
+                        :to="{ name: 'myHome' }" 
+                        tag="a" 
+                        exact 
+                        class="navbarLinks animated bounceIn"
+                    >
+                    <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
+                    Home</router-link>
+                </div>
+
+                <div class="listWrapper">
+                    <router-link
+                        id="listLink" 
+                        :to="{ name: 'myList' }"
+                        tag="a" 
+                        exact 
+                        class="navbarLinks animated bounceIn"
+                    >
+                    <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
+                    Lists
                     </router-link>
-                </li>
-                <li style="list-style-type: none;">
-                    <router-link to="/list" tag="li" active-class="active" exact>
-                        <a class="navbarLinks">Lists <span class="sr-only">(current)</span></a>
-                    </router-link>
-                </li>
+                </div>
             </ul>
-
-            <!-- DROP DOWN -->
-            <!-- Bootstrap vue option. cannot remove caret and not sure why -->
-            <!-- <div class="settingsDiv">
-                <b-dropdown variant="success" right no-caret text="">    
-                    <span slot="text">Split Dropdown Button<font-awesome-icon icon="angle-down" class="faAngle" /></span>
-
-                    <b-dropdown-item href="#">Action</b-dropdown-item>
-                    <b-dropdown-item href="#">Another action</b-dropdown-item>
-                    <b-dropdown-item href="#">Something else here</b-dropdown-item>
-                </b-dropdown>
-            </div> -->
 
             <div class="dropdown settingsDiv">
                 <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
-                    <font-awesome-icon icon="angle-down" class="faAngle" @click="showLeftDropdown = !showLeftDropdown" />
+                    <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                     <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
@@ -49,36 +51,29 @@
                     <a class="dropdown-item" href="#">Something else here</a>
                 </div>
             </div>
-
-
-            <!-- <div class="settingsDiv">
-                <font-awesome-icon icon="angle-down" class="faAngle" @click="showLeftDropdown = !showLeftDropdown" />
-                <div v-click-outside="clickedOutsideDropdown" class="leftDropdownDiv animated fadeIn" v-show="showLeftDropdown">
-                    <div class="logoutBtn" @click.prevent="firebaseLogout" >Logout</div>
-                </div>
-            </div> -->
         </div>
     </nav>
 </template>
 
 <script>
     import firebase from 'firebase/app';
+    import store from 'vuex';
+    import { router } from '../main.js';
     import 'animate.css';
 
     export default {
-        methods: {
-            firebaseLogout() {
-                firebase.auth().signOut();
-            }
-        },
         data() {
             return {
-                showLeftDropdown: false,
+                
             }
         },
-        events: {
-            clickedOutsideDropdown(event) {
-                this.showLeftDropdown = false;
+        methods: {
+            firebaseLogout() {
+                firebase.auth().signOut()
+                    .then(() => {
+                        this.$store.dispatch('signOut');
+                        router.push({ name: 'myLogin', path: '/login' })
+                    });
             }
         }
     }
@@ -86,8 +81,7 @@
 
 <style lang="scss" scoped>
     @import '../../public/main.scss';
-
-    nav {
+    #myNav {
         display: flex;
         width: 100%;
         height: 8em;
@@ -103,27 +97,69 @@
                 display: flex;
                 flex-flow: row nowrap;
                 justify-content: center;
-                margin-top: 12px;
-            .navbarLinks {
-                margin: .6em;
-                padding: 15px 4px;
-                color: $fontColorLight;
-                font-family: $regFont;
-                font-weight: 800;
-                font-size: 1.8em;
-                text-decoration: none;
-                letter-spacing: -.06ch;
-                &:hover {
+                margin-top: 5px;
+                .navbarLinks {
+                    color: $fontColorLight;
+                    font-family: $regFont;
+                    font-weight: 800;
+                    font-size: 1.8em;
+                    text-decoration: none;
+                    letter-spacing: -.06ch;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+                .homeWrapper {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    margin: 0 2em;
+                    margin-top: -2em;
+                    padding: 1em 0 0 0;
+                    &:hover {
                         transition: .7s;
                         color: $hoverLightFont;
                         border-top: 8px solid rgba(255, 255, 255, .8);
                     }
+                    .faHome {
+                        color: $fontColorLight;
+                        font-size: 37px;
+                        margin: auto;
+                        position: relative;
+                        left: .5em;
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
                 }
+                .listWrapper {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    margin: 0 2em;
+                    margin-top: -2em;
+                    padding: 1em 0 0 0;
+                    &:hover {
+                        transition: .7s;
+                        color: $hoverLightFont;
+                        border-top: 8px solid rgba(255, 255, 255, .8);
+                    }
+                    .faList {
+                        color: $fontColorLight;
+                        font-size: 37px;
+                        margin: auto;
+                        position: relative;
+                        left: .25em;
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+                }
+
             }
+            // DROPDOWN
             .settingsDiv {
-                // display: flex;
-                // flex-direction: row;
-                // justify-content: flex-end;
+                padding: 0;
                 .myDropdownBtn {
                     border: none;
                     background-color: transparent;
@@ -151,31 +187,8 @@
                     font-size: 27px;
                     &:hover {
                         cursor: pointer;
-                    }
-                }
-                .dropDownBtn {
-
-                }
-                .leftDropdownDiv {
-                    position: fixed;
-                    width: 12em;
-                    height: 12em;
-                    top: 4.4em;
-                    right: 1.7em;
-                    background-color: rgba(111, 109, 109, 0.4);
-                    border-radius: 2px;
-                    box-shadow: 1px 5px 5px lightgray;
-                    .logoutBtn {
-                        cursor: pointer;
-                        // border: 1px solid $mainBlue;
-                        font-size: 23px;
-                        font-family: $regFont;
-                        background-color: $mainWhite;
-                        color: rgba(0, 0, 0, 0.7);
-                        &:hover {
-                            transition: .7s;
-                            // transform: scale(1.1);
-                        }
+                        transform: scale(1.2);
+                        transition: .8s;
                     }
                 }
             }
@@ -208,4 +221,51 @@
             }
         }
     }
+    
+    // MOBILE
+@media (max-width: 550px) {
+    #myNav {
+        height: 6.5em;
+        display: flex;
+        flex-flow: row nowrap;
+        .navItemsWrapper {
+            margin: auto 0;
+            .navBtns {
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: center;
+                margin-top: 12px;
+                .navbarLinks {
+                    font-size: 1em;
+                    .faHome {
+                        font-size: 27px;
+                        left: .23em;
+                    }
+                    .faList {
+                        font-size: 27px;
+                        left: .09em;
+                    }
+                }
+            }
+        }
+    }
+    .brandDiv {
+        width: 6em !important;
+        height: 6em !important;
+        margin: .25em 0 0 1em !important;
+        margin-left: 1em;
+        .navbarBrand {
+            font-size: 2.35em !important;
+        }
+    }
+    .homeWrapper {
+        margin: auto 15px !important;
+    }
+    .listWrapper {
+        margin: auto 15px !important;
+    }
+    .dropdown-toggle {
+        margin: 2em auto !important;
+    }
+}
 </style>
