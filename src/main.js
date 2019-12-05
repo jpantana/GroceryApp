@@ -31,9 +31,7 @@ export const router = new VueRouter({
 
 // NOT WORKING AT ALL
 router.beforeEach((to, from, next) => {
-  console.error(localStorage.getItem('user-token'), to.path);
   if (localStorage.getItem('user-token') === null) {
-    console.error('local storage true');
     if (to.path == '/login') {
       next();
     } else {

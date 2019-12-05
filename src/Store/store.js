@@ -26,6 +26,7 @@ export const store = new Vuex.Store({
       localStorage.setItem('user-token', payload.token);
       firebase.auth().onAuthStateChanged((user) => {
         if (user !== null) {
+          state.user = { ...state.user};
           state.user.email = user.email;
           state.user.uid = user.uid;
           state.user.authed = true;
@@ -57,7 +58,7 @@ export const store = new Vuex.Store({
           firebase.auth().createUserWithEmailAndPassword(myEmail, password)
             .then(res => {
               commit('addTokenToState', {
-                token: res.credential.accessToken
+                token: res.user.refreshToken
               });
             }).catch(err => {
               console.error('no new user created', err);
@@ -75,7 +76,7 @@ export const store = new Vuex.Store({
           firebase.auth().signInWithEmailAndPassword(myEmail, password)
             .then(res => {
               commit('addTokenToState', {
-                token: res.credential.accessToken
+                token: res.user.refreshToken
               });
             }).catch(() => {
               alert('Sorry. This email/password is incorrect');
