@@ -1,56 +1,69 @@
 <template>
-    <nav id="myNav">
+    <nav>
+        <div  id="myNav">
         <!-- BRAND -->
-        <div class="brandDiv animated rotateIn">
-            <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
-            <!-- <p class="brandTag">shop together. stay together</p> -->
-        </div>
+            <div class="brandDiv animated rotateIn">
+                <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
+                <!-- <p class="brandTag">shop together. stay together</p> -->
+            </div>
 
-        <div class="navItemsWrapper" id="navItemsWrapperId">
-            <!-- SEARCH NAV -->
-            <!-- <form class="">
-                <input class="" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success submitBtn" type="submit">Search</button>
-            </form> -->
+            <div class="navItemsWrapper" id="navItemsWrapperId">
+                <!-- SEARCH NAV -->
+                <!-- <form class="">
+                    <input class="" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success submitBtn" type="submit">Search</button>
+                </form> -->
 
-            <!-- LINKS -->
-            <ul class="navBtns">
-                <div class="homeWrapper">
-                    <router-link 
-                        id="homeLink" 
-                        :to="{ name: 'myHome' }" 
-                        tag="a" 
-                        exact 
-                        class="navbarLinks animated bounceIn"
-                    >
-                    <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
-                    Home</router-link>
-                </div>
+                <!-- LINKS -->
+                <ul class="navBtns">
+                    <div class="homeWrapper">
+                        <router-link
+                            id="homeLink"
+                            :to="{ name: 'myHome' }"
+                            tag="a"
+                            exact
+                            class="navbarLinks animated bounceIn"
+                        >
+                        <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
+                        Home</router-link>
+                    </div>
 
-                <div class="listWrapper">
-                    <router-link
-                        id="listLink" 
-                        :to="{ name: 'myList' }"
-                        tag="a" 
-                        exact 
-                        class="navbarLinks animated bounceIn"
-                    >
-                    <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
-                    Lists
-                    </router-link>
-                </div>
-            </ul>
+                    <div class="listWrapper">
+                        <router-link
+                            id="listLink"
+                            :to="{ name: 'myList' }"
+                            tag="a"
+                            exact
+                            class="navbarLinks animated bounceIn"
+                        >
+                        <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
+                        Lists
+                        </router-link>
+                    </div>
+                </ul>
 
-            <div class="dropdown settingsDiv">
-                <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
-                    <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown settingsDiv">
+                    <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
+                        <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+
+
                 </div>
             </div>
+        </div>
+
+        <div id="bottomNavBar">
+            <span class="userProfileSpan">
+                <div class="userProfCondDiv" v-show="!user.length">
+                    <font-awesome-icon icon="user" class="faAngle animated bounceIn userIcon" />
+                    <p class="usersName">{{ this.$store.state.user.firstName }}</p>
+                </div>
+            </span>
         </div>
     </nav>
 </template>
@@ -58,13 +71,14 @@
 <script>
     import firebase from 'firebase/app';
     import store from 'vuex';
+    import userData from '../helpers/data/usersData.js';
     import { router } from '../main.js';
     import 'animate.css';
 
     export default {
         data() {
             return {
-                
+                user: ''
             }
         },
         methods: {
@@ -74,7 +88,15 @@
                         this.$store.dispatch('signOut');
                         router.push({ name: 'myLogin', path: '/login' })
                     });
-            }
+            },
+        },
+        created() {
+            userData.getSingleUser(this.$store.state.user.Uid)
+                .then((resp) => {
+                    if (resp.firstName !== null) {
+                        this.user = resp;
+                    }
+                }).catch(err => console.error(err));
         }
     }
 </script>
@@ -176,7 +198,7 @@
                         box-shadow: none !important;
                     }
                 }
-                .dropdown-toggle:after { 
+                .dropdown-toggle:after {
                     content: none;
                 }
                 .dropdown-menu {
@@ -221,8 +243,45 @@
             }
         }
     }
-    
-    // MOBILE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// LOWER NAVBAR
+    #bottomNavBar {
+        background-color: $bottomNavColor;
+        height: 2.5em;
+        width: 100%;
+        margin-bottom: 1em;
+        color: $fontColorLight;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-end;
+        .userProfileSpan {
+            //min-width: 50px;
+            margin: 10px 10px 0 0;
+            .userProfCondDiv {
+               // margin-right: 10px;
+                width: auto;
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: space-evenly;
+                .usersName {
+                    // color: $fontColorDark;
+                    font-size: 12px;
+                    color: $fontColorDark;
+                    font-style: italic;
+                    margin: auto;
+
+                }
+                .userIcon {
+                    color: $mainBlue;
+                    font-size: 15px;
+                    margin-right: 5px;
+                    margin-top: 2px;
+                }
+            }
+        }
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// MOBILE
 @media (max-width: 550px) {
     #myNav {
         height: 6.5em;

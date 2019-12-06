@@ -14,7 +14,7 @@ import 'animate.css';
 import BootstrapVue from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { fas, faOm } from '@fortawesome/free-solid-svg-icons'
+import { fas, faOm } from '@fortawesome/free-solid-svg-icons';
 
 library.add(fas)
 
@@ -48,6 +48,9 @@ var vm = new Vue({
     render: h => h(App),
     base: firebaseApp(),
     methods: {
-      
+
+    },
+    created() {
+      //console.error('from main', store);
     }
   }).$mount( '#app' );

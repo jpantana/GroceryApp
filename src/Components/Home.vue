@@ -1,16 +1,33 @@
 <template>
     <div class="divWrapper animated bounceIn">
         <h1 class="myH1">{{ h1Text }}</h1>
+        <button @click="callUsers">See Users</button>
+        <ul>
+            <li :key="i" v-for="(user, i) in users">{{ user.firstName }}</li>
+        </ul>
     </div>
 </template>
 
 <script>
+    import usersData from '../helpers/data/usersData.js';
     import 'animate.css';
     export default {
         data() {
             return {
-                h1Text: 'This is a big home component'
+                h1Text: '',
+                users: []
             }
+        },
+        methods: {
+            callUsers() {
+                usersData.getAllUsers()
+                    .then((res) => {
+                        this.users = res;
+                    }).catch();
+            }
+        },
+        created() {
+
         }
     }
 </script>
@@ -23,8 +40,8 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background-color: blue;
-        width: 200px;
-        height: 200px;
+        background-color: lightgray;
+        width: 80%;
+        height: auto;
     }
 </style>

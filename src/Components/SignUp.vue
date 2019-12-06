@@ -1,5 +1,5 @@
 <template>
-    <div class="divWrapper">    
+    <div class="divWrapper">
         <div class="bannerDiv animated fadeIn">
             <h4 class="banner" v-show="!signUp">Join Sweet Carts today!</h4>
             <h4 class="banner animated fadeIn" v-show="signUp">Create Your Account</h4>
@@ -7,7 +7,7 @@
         <form class="animated fadeIn">
             <!-- SIGN UP FORM SECTION -->
             <div v-show="signUp" class="animated fadeIn">
-                    <div class="form-group">
+                <div class="form-group">
                     <label for="exampleInputEmail1">Email address</label>
                     <input v-model.lazy="user.email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
                     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
@@ -16,15 +16,25 @@
                     <label for="exampleInputPassword1">Password</label>
                     <input v-model.lazy="user.password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                 </div>
+                <hr>
+                <div class="form-group">
+                    <label for="userFirstName">First Name</label>
+                    <input novalidate="true" v-model.lazy="user.firstName" type="text" class="form-control" id="exampleInputFirstname1" aria-describeby="firstname" placeholder="First name">
+                </div>
+
+                <div class="form-group">
+                    <label for="userLastName">Last Name</label>
+                    <input v-model.lazy="user.lastName" type="text" class="form-control" id="exampleInputLastname1" aria-describeby="lastname" placeholder="Last name">
+                </div>
 
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label v-model="user.subscribe = true" class="form-check-label" for="exampleCheck1">Subscribe to our montly email</label>
                 </div>
-
+                <hr>
                 <button type="submit" @click.prevent="submitNewEmailSignup(user)" class="btn submitBtn">Submit</button>
             </div>
-            
+
 
             <!-- SIGN IN EXISTING USER FORM SECTION -->
             <div v-show="signIn" class="animated fadeIn">
@@ -40,7 +50,7 @@
 
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck2">
-                    <label v-model="user.subscribe = true" class="form-check-label" for="exampleCheck1">Subscribe to our montly email</label>
+                    <label v-model="user.subscribe = true" class="form-check-label" for="exampleCheck2">Subscribe to our montly email</label>
                 </div>
 
                 <button type="submit" @click.prevent="existingEmailSignIn(user)" class="btn submitBtn">Sign In</button>
@@ -68,7 +78,7 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex'; 
+    import { mapActions } from 'vuex';
     import 'animate.css';
     import GoogleIcon from '../../assets/googleLogo.svg';
 
@@ -78,6 +88,8 @@
                 user: {
                     email: '',
                     password: '',
+                    firstName: '',
+                    lastName: '',
                     subscribe: false
                 },
                 signUp: false,
