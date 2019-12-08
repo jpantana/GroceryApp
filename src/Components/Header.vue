@@ -1,5 +1,22 @@
 <template>
     <nav>
+    <!-- MODAL HERE -->
+        <b-modal ref="my-modal" hide-footer title="Tell us more about yourself...">
+            <div class="d-block text-center">
+                <b-container fluid>
+                    <b-row>
+                        <label for="getFirstName">Firstname</label>
+                        <b-form-input  v-model.lazy="updateUser.firstName" placeholder="Enter your firstname" id="getFirstName"></b-form-input>
+                    </b-row>
+                    <b-row>
+                        <label for="getLastName">LastName</label>
+                        <b-form-input  v-model.lazy="updateUser.lastName" placeholder="Enter your lastname" id="getLastName"></b-form-input>
+                    </b-row>
+                    <button @click.prevent="sendUpdatedUserInfo" class="btn btn-primary">Save Changes</button>
+                </b-container>
+            </div>
+        </b-modal>
+
         <div  id="myNav">
         <!-- BRAND -->
             <div class="brandDiv animated rotateIn">
@@ -48,10 +65,15 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                         <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
-                        <a class="dropdown-item" href="#">Another action</a>
+                        <!-- HERE IS WHERE I WANT TO CALL MODAL TO SHOW TRUE -->
+                        <a
+                            id="linkToUpdateUserName"
+                            @click.prevent="updateUserProfileBtn"
+                            class="dropdown-item"
+                            href="#"
+                        >User Profile</a>
                         <a class="dropdown-item" href="#">Something else here</a>
                     </div>
-
 
                 </div>
             </div>
@@ -70,18 +92,37 @@
 
 <script>
     import firebase from 'firebase/app';
-    import store from 'vuex';
+    import { store } from 'vuex';
     import userData from '../helpers/data/usersData.js';
+    import { mapActions } from 'vuex';
     import { router } from '../main.js';
     import 'animate.css';
+    import 'jquery';
 
     export default {
         data() {
             return {
-                user: ''
+                user: '',
+                updateUser: {
+                    firstName: null,
+                    lastName: null
+                }
             }
         },
         methods: {
+            ...mapActions([
+                'upadteUserProfile',
+                'signOut',
+                'rebuildStateAfterRefresh'
+            ]),
+            updateUserProfileBtn() {
+                // modal call would be good here
+                this.$refs['my-modal'].toggle('#linkToUpdateUserName');
+            },
+            sendUpdatedUserInfo() {
+                this.$refs['my-modal'].toggle('#linkToUpdateUserName');
+                this.$store.dispatch('upadteUserProfile', this.updateUser);
+            },
             firebaseLogout() {
                 firebase.auth().signOut()
                     .then(() => {
@@ -91,12 +132,12 @@
             },
         },
         created() {
-            userData.getSingleUser(this.$store.state.user.Uid)
-                .then((resp) => {
-                    if (resp.firstName !== null) {
-                        this.user = resp;
-                    }
-                }).catch(err => console.error(err));
+            // check for firebase user and dispatch a login action for axios comparison
+            firebase.auth().onAuthStateChanged((fbUser) => {
+                if (fbUser) {
+                    this.$store.dispatch('rebuildStateAfterRefresh', fbUser);
+                }
+            });
         }
     }
 </script>
@@ -258,13 +299,11 @@
             //min-width: 50px;
             margin: 10px 10px 0 0;
             .userProfCondDiv {
-               // margin-right: 10px;
                 width: auto;
                 display: flex;
                 flex-flow: row nowrap;
                 justify-content: space-evenly;
                 .usersName {
-                    // color: $fontColorDark;
                     font-size: 12px;
                     color: $fontColorDark;
                     font-style: italic;

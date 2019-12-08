@@ -51,6 +51,6 @@ var vm = new Vue({
 
     },
     created() {
-      //console.error('from main', store);
+
     }
   }).$mount( '#app' );

@@ -62,7 +62,7 @@
             <button v-show="!signUp" type="submit" @click.prevent="makeNewEmailPasswordAcct" class="btn submitBtn">Sign Up</button>
              <hr>
             <div class="googleBtnDiv">
-                    <button class="btn googleBtn" @click.prevent="loginGEvent">
+                    <button class="btn googleBtn" @click.prevent="loginGoogleEvent">
                         <GoogleIcon id="googleIcon"/>
                         <span>Login with Google</span>
                     </button>
@@ -98,7 +98,7 @@
         },
         methods: {
             ...mapActions([
-                'loginGEvent',
+                'loginGoogleEvent',
                 'submitNewEmailSignup',
                 'existingEmailSignIn'
             ]),

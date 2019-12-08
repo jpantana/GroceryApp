@@ -15,5 +15,7 @@ const getSingleUser = uid => new Promise((resolve, reject) => {
 
 const addNewUser = newUser => axios.post(`${baseUrl}/user`, newUser);
 
+const updateUser = (uid, updatedUser) => axios.put(`${baseUrl}/user/${uid}`, updatedUser);
 
-export default { getAllUsers, getSingleUser, addNewUser };
+
+export default { getAllUsers, getSingleUser, addNewUser, updateUser };
