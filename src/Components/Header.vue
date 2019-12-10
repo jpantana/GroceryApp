@@ -25,12 +25,6 @@
             </div>
 
             <div class="navItemsWrapper" id="navItemsWrapperId">
-                <!-- SEARCH NAV -->
-                <!-- <form class="">
-                    <input class="" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success submitBtn" type="submit">Search</button>
-                </form> -->
-
                 <!-- LINKS -->
                 <ul class="navBtns">
                     <div class="homeWrapper">
@@ -59,12 +53,13 @@
                     </div>
                 </ul>
 
+                <!-- Stretch: make this its own component -->
                 <div class="dropdown settingsDiv">
                     <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
                         <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
+                        <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Sign Out</a>
                         <!-- HERE IS WHERE I WANT TO CALL MODAL TO SHOW TRUE -->
                         <a
                             id="linkToUpdateUserName"
@@ -72,7 +67,7 @@
                             class="dropdown-item"
                             href="#"
                         >User Profile</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <!-- <a class="dropdown-item" href="#">Delete Account</a> -->
                     </div>
 
                 </div>

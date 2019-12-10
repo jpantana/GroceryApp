@@ -1,10 +1,9 @@
 <template>
     <div class="divWrapper animated bounceIn">
         <h1 class="myH1">{{ h1Text }}</h1>
-        <button @click="callUsers">See Users</button>
-        <ul>
-            <li :key="i" v-for="(user, i) in users">{{ user.firstName }}</li>
-        </ul>
+        <!-- <div class="addItemBtnDiv1">
+            <button class="btn addAnItemBtn">Add To Your List!</button>
+        </div> -->
     </div>
 </template>
 
@@ -35,13 +34,13 @@
 <style lang="scss" scoped>
     @import '../../public/main.scss';
 
-    div {
+    .divWrapper {
         margin: auto;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        background-color: lightgray;
-        width: 80%;
+        background-color: transparent;
+        width: 90%;
         height: auto;
     }
 </style>

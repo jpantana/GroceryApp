@@ -5,8 +5,6 @@ import App from './App.vue';
 import { firebaseApp } from './helpers/data/connection.js';
 import { routes } from './Routing/routes.js';
 import { store } from './Store/store.js';
-// import { mapGetters, mapActions, mapMutations } from 'vuex';
-
 // STYLES
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/js/dist/dropdown';

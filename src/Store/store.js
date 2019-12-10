@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { router } from '../main.js'
-import userData from '../helpers/data/usersData.js';
+import usersData from '../helpers/data/usersData.js';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import itemsData from '../helpers/data/itemsData.js';
+import groceryListData from '../helpers/data/groceryListData.js';
 
 Vue.use(Vuex);
 
@@ -18,63 +20,61 @@ export const store = new Vuex.Store({
       token: ''
     }
   },
-  getters: {
-    // NOT REALLY USING THIS
-    // userPermissions: state => {
-    //   return state.user.token;
-    // }
-  },
+  //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
-    addTokenToState (state, payload) {
+    addUserToState (state, payload) {
       localStorage.setItem('user-token', payload.token);
-      if (!payload.Uid) { // ELSE: exisiting user returning to login
-        firebase.auth().onAuthStateChanged((user) => {
-          if (user !== null) {
-            state.user = { ...state.user}; // NOT SURE YOU NEED. RESEAECH NEEDED
-            state.user = {
-              email: user.email,
-              uid: user.uid,
-              authed: true,
-              token: payload.token,
-              firstName: payload.FirstName,
-              lastName: payload.LastName
+      // SEE IF USER ALREADY EXISTS
+      firebase.auth().onAuthStateChanged((user) => {
+        usersData.getSingleUser(user.uid)
+        .then((response) => {
+          if (!response.length) {
+            // code block for firstime google auth
+            const newUser = {
+              "FirstName": payload.FirstName,
+              "LastName": payload.LastName,
+              "Email": user.email,
+              "Uid": user.uid,
             };
-            // AXIOS REQUEST TO DB
-            userData.getSingleUser(state.user.uid)
-            .then((resp) => {
-              if (resp.length === 0) { // Means this is a first time login and FB data needs to get to DB
-                const newUser = {
-                  "FirstName": payload.FirstName,
-                  "LastName": payload.LastName,
-                  "Email": user.email,
-                  "Uid": user.uid
+            usersData.addNewUser(newUser)
+              .then((res) => {
+                state.user = {
+                  firstName: res.data.firstName,
+                  lastName: res.data.lastName,
+                  email: res.data.email,
+                  uid: res.data.uid,
+                  authed: true,
+                  token: localStorage.getItem('user-token')
                 };
-                userData.addNewUser(newUser) // Here we take action and add new user to DB
-                  .then()
-                  .catch(err => console.error(err));
-              }
-            }).catch(err => console.error(err));
-            router.push({ name: 'myHome', path: '/' }); // Force navigation not that auth has been recorded (a little hacky maybe, but beforeEach gave trouble)
+              })
+              .catch(err => console.error(err));
+          } else if (response.length) {
+          // } else if (!payload.firsttimeUser) {
+            // code for returning user
+            usersData.getSingleUser(user.uid)
+              .then((res) => {
+                state.user = {
+                  firstName: res[0].firstName,
+                  lastName: res[0].lastName,
+                  email: res[0].email,
+                  uid: res[0].uid,
+                  authed: true,
+                  token: localStorage.getItem('user-token')
+                };
+              })
+              .catch(err => console.error(err));
           }
-        });
-      } else { // Existing user in FB and DB returning
-        state.user = {
-          email: payload.Email,
-          uid: payload.Uid,
-          authed: true,
-          token: payload.token,
-          firstName: payload.FirstName,
-          lastName: payload.LastName
-        };
-        router.push({ name: 'myHome', path: '/' }); // may could refactor here to only use this line once, and add a condition for auth status
-      }
+        })
+        .catch();
+      });
+      router.push({ name: 'myHome', path: '/' });
     },
     // LOGOUT METHOD
     revokeToken (state, payload) {
       localStorage.removeItem('user-token');
       state.user = payload;
     },
-    // VUEX store doesn't maintain login records when browser refreshes, so here is work around. Too taxing.
+    // VUEX store doesn't maintain login records when browser refreshes, so here is a clunky work around
     refreshUserState (state, payload) {
       state.user = {
         email: payload.Email,
@@ -85,49 +85,50 @@ export const store = new Vuex.Store({
         lastName: payload.LastName
       };
     },
-    // UPDATE/ADD USER NAME TO EXISTING USER
+    // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
     UpdateOrAddUserName (state, payload) {
       state.user.firstName = payload.firstName;
       state.user.lastName = payload.lastName;
-      userData.getSingleUser(state.user.uid)
+      // get the user to update
+      usersData.getSingleUser(state.user.uid)
         .then((resp) => {
           payload.Uid = resp[0].uid;
-          // console.error(resp[0].uid, 'testisangasdg', payload);
-          userData.updateUser(resp[0].uid, payload)
-            .then((r) => console.error(r))
+          // now, update said user
+          usersData.updateUser(resp[0].uid, payload)
+            .then((r) => {
+              // r gets updated to state in another code block
+            })
             .catch(err => console.error(err));
-          // code for update call here.
         }).catch(err => console.error(err));
     }
   },
+  //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
   actions: {
-      loginGoogleEvent: ({ commit }, event) => {
+      loginGoogleEvent: ({ commit }) => {
         const provider = new firebase.auth.GoogleAuthProvider();
         firebase.auth().signInWithPopup(provider)
           .then(res => {
-            commit('addTokenToState', {
-              token: res.credential.accessToken
-            });
-            router.push('/');
+              commit('addUserToState', {
+                token: res.credential.accessToken,
+                firsttimeUser: res.additionalUserInfo.isNewUser,
+                FirstName: null,
+                LastName: null
+              });
           });
       },
       submitNewEmailSignup: ({ commit }, payload) => {
         if (payload.email.length > 1) {
           const myEmail = payload.email;
           const password = payload.password;
-          const firstName = payload.firstName;
-          const lastName = payload.lastName;
           firebase.auth().createUserWithEmailAndPassword(myEmail, password)
             .then(res => {
-              commit('addTokenToState', {
+              commit('addUserToState', {
+                firsttimeUser: res.additionalUserInfo.isNewUser,
                 token: res.user.refreshToken,
-                FirstName: firstName,
-                LastName: lastName
+                FirstName: payload.firstName,
+                LastName: payload.lastName
               });
-            }).catch(err => {
-              console.error('no new user created', err);
-              alert(err.message);
-            });
+            }).catch(err => alert(err.message));
           } else {
             alert('Please enter a valid email address and password');
           }
@@ -139,20 +140,13 @@ export const store = new Vuex.Store({
           const password = payload.password;
           firebase.auth().signInWithEmailAndPassword(myEmail, password)
             .then(res => {
-              userData.getSingleUser(res.user.uid)
-                .then((resp) => {
-                  commit('addTokenToState', {
-                    token: res.user.refreshToken,
-                    FirstName: resp[0].firstName,
-                    LastName: resp[0].lastName,
-                    Uid: resp[0].uid,
-                    Email: resp[0].email
-                  });
-                });
-              }).catch((err) => {
-                console.error(err);
-                alert('Sorry. This email/password is incorrect');
+              commit('addUserToState', {
+                firsttimeUser: res.additionalUserInfo.isNewUser,
+                token: res.user.refreshToken,
+                FirstName: payload.firstName,
+                LastName: payload.lastName
               });
+              }).catch((err) => alert('Sorry. This email/password is incorrect', err));
           } else {
           alert('Please enter a valid email address and/or password');
         }
@@ -167,29 +161,37 @@ export const store = new Vuex.Store({
       },
       rebuildStateAfterRefresh: ({ commit }, payload) => {
         // payload returns user from FB request
-        if (!store.state.user.Uid) {
-          userData.getSingleUser(payload.uid)
+          usersData.getSingleUser(payload.uid)
               .then((resp) => {
-                  if (resp.firstName !== null) {
-                    // console.error('do something with payload');
                     commit('refreshUserState', {
                       token: localStorage.getItem('user-token'),
-                      FirstName: resp[0].firstName,
-                      LastName: resp[0].lastName,
+                      FirstName: !resp[0].firstName ? '' : resp[0].firstName,
+                      LastName: !resp[0].lastName ? '' : resp[0].lastName,
                       Uid: resp[0].uid,
                       Email: resp[0].email
                     });
-                  }
+                  // }
               }).catch(err => console.error(err));
-            } else {
-              console.log('create calls rebuild in store and hits else');
-            }
-        },
+      },
       // needs to receive payload from user input catpure in Header.vue
-        upadteUserProfile: ({ commit }, payload) => {
-          // const uid = store.state.user.Uid;
-          // console.error(store.state.user, payload);
-          commit('UpdateOrAddUserName', payload);
-        },
+      upadteUserProfile: ({ commit }, payload) => {
+        commit('UpdateOrAddUserName', payload);
+      },
+      addNewFoodToList: ({ commit }, payload) => {
+        console.log(payload, 'new food item');
+        // groceryListData.getMyGroceryList
+        // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
+        itemsData.addItem(payload)
+          .then((resp) => {
+
+          })
+          .catch(err => console.error(err));
+      },
+      seeGroceryLists: ({ commit }, payload) => {
+        console.error(payload);
+        groceryListData.makeGroceryList(payload)
+          .then()
+          .catch(err => console.error(err));
       }
+    }
 });
