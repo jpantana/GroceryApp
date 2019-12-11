@@ -178,7 +178,7 @@ export const store = new Vuex.Store({
         commit('UpdateOrAddUserName', payload);
       },
       addNewFoodToList: ({ commit }, payload) => {
-        console.log(payload, 'new food item');
+        //console.log(payload, 'new food item');
         // groceryListData.getMyGroceryList
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
@@ -188,7 +188,7 @@ export const store = new Vuex.Store({
           .catch(err => console.error(err));
       },
       seeGroceryLists: ({ commit }, payload) => {
-        console.error(payload);
+        // console.error(payload);
         groceryListData.makeGroceryList(payload)
           .then()
           .catch(err => console.error(err));

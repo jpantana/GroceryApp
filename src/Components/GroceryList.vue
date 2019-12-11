@@ -18,17 +18,18 @@
                             name="GroceryStore"
                             id="groceryStoreSelect"
                             class="form-control"
+                            v-model="selected"
                         >
                             <option
-                                :key="`${i}option`"
-                                v-for="(list, i) in gLists"
+                                :key="`${list.id}.key`"
+                                :id="`${list.id}`"
+                                v-for="list in groceryLists"
                             >{{ list.name }}</option>
                         </select>
+                        <!-- <font-awesome-icon icon="backspace" class="faBackspace" /> -->
                 </div>
             </form>
         </div>
-
-    <div>{{ groceryLists }} {{ gLists }}</div>
 
          <div
             class="makeNewDiv animated fadeIn"
@@ -55,20 +56,31 @@
             return {
                 listName: '',
                 addGroceryList: false,
-                gLists: this.groceryLists.length == 0 ? ['Make a list'] : this.groceryLists,
+                selected: '',
+                forItm: {
+                    userId: '',
+                    groceryListId: 0,
+                }
             }
         },
-        props: ['isList', 'groceryLists'],
+        props: ['groceryLists'],
         methods: {
             callBackToListWithNewList(e) {
-                // console.error(e, this.listName);
                 this.addGroceryList = false;
                 this.$emit('newGroceryList', this.listName);
             }
         },
         watch: {
-            selectedGrocery: function(val) {
-                this.$emit('newSelectedList', val);
+            selected: function(val) {
+                const items = this.groceryLists;
+                const res = items.filter(itm => itm.name == val);
+                // gives us GroceryStoreId, and UserId (courtesy of drop down)
+                const myItem = {
+                    userId: res[0].userId,
+                    groceryListId: res[0].id
+                };
+                this.forItm = myItem;
+                this.$emit('newSelectedList', myItem);
             },
         }
     }
@@ -78,10 +90,9 @@
     @import '../../public/main.scss';
 
     .selectDiv {
-        // background-color: pink;
         width: 100%;
-        // background-color: pink;
         margin: auto;
+        margin-top: -1.5em;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -91,6 +102,8 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between !important;
+            background-color: $secondBlue;
+            border-radius: 4px;
             .plusIcon {
                 background-color: $mainBlue;
                 font-size: 30px;
@@ -107,23 +120,16 @@
                 }
             }
             .myFormForDropDown {
-                //width: 100%;
+                // width: 100%;
                 .dropDownDiv {
                     width: 17em;
-                    // float: right;
                     margin-top: .5em;
-                    // display: flex;
-                    // flex-direction: column;
-                    // justify-content: center;
                 }
             }
         }
         .makeNewDiv {
             display: flex;
             flex-direction: column;
-            // margin-bottom: 1em;
-            // background-color: $bottomNavColor;
-            // padding: 1em;
             border-radius: 2px;
             width: auto;
             height: 3.2em;

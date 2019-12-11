@@ -41,5 +41,8 @@
 </script>
 
 <style lang="scss" scoped>
-
+    @import '../public/main.scss';
+    .myContainer {
+        // background-color: $secondBlue;
+    }
 </style>
