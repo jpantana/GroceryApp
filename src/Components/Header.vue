@@ -1,80 +1,138 @@
 <template>
-    <nav id="myNav">
+    <nav>
+    <!-- MODAL HERE -->
+        <b-modal ref="my-modal" hide-footer title="Tell us more about yourself...">
+            <div class="d-block text-center">
+                <b-container fluid>
+                    <b-row>
+                        <label for="getFirstName">Firstname</label>
+                        <b-form-input  v-model.lazy="updateUser.firstName" placeholder="Enter your firstname" id="getFirstName"></b-form-input>
+                    </b-row>
+                    <b-row>
+                        <label for="getLastName">LastName</label>
+                        <b-form-input  v-model.lazy="updateUser.lastName" placeholder="Enter your lastname" id="getLastName"></b-form-input>
+                    </b-row>
+                    <button @click.prevent="sendUpdatedUserInfo" class="btn btn-primary">Save Changes</button>
+                </b-container>
+            </div>
+        </b-modal>
+
+        <div  id="myNav">
         <!-- BRAND -->
-        <div class="brandDiv animated rotateIn">
-            <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
-            <!-- <p class="brandTag">shop together. stay together</p> -->
-        </div>
+            <div class="brandDiv animated rotateIn">
+                <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
+                <!-- <p class="brandTag">shop together. stay together</p> -->
+            </div>
 
-        <div class="navItemsWrapper" id="navItemsWrapperId">
-            <!-- SEARCH NAV -->
-            <!-- <form class="">
-                <input class="" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success submitBtn" type="submit">Search</button>
-            </form> -->
+            <div class="navItemsWrapper" id="navItemsWrapperId">
+                <!-- LINKS -->
+                <ul class="navBtns">
+                    <div class="homeWrapper">
+                        <router-link
+                            id="homeLink"
+                            :to="{ name: 'myHome' }"
+                            tag="a"
+                            exact
+                            class="navbarLinks animated bounceIn"
+                        >
+                        <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
+                        Home</router-link>
+                    </div>
 
-            <!-- LINKS -->
-            <ul class="navBtns">
-                <div class="homeWrapper">
-                    <router-link 
-                        id="homeLink" 
-                        :to="{ name: 'myHome' }" 
-                        tag="a" 
-                        exact 
-                        class="navbarLinks animated bounceIn"
-                    >
-                    <font-awesome-icon icon="home" class="faHome animated bounceIn" /><br>
-                    Home</router-link>
-                </div>
+                    <div class="listWrapper">
+                        <router-link
+                            id="listLink"
+                            :to="{ name: 'myList' }"
+                            tag="a"
+                            exact
+                            class="navbarLinks animated bounceIn"
+                        >
+                        <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
+                        Lists
+                        </router-link>
+                    </div>
+                </ul>
 
-                <div class="listWrapper">
-                    <router-link
-                        id="listLink" 
-                        :to="{ name: 'myList' }"
-                        tag="a" 
-                        exact 
-                        class="navbarLinks animated bounceIn"
-                    >
-                    <font-awesome-icon icon="list" class="faList animated bounceIn" /><br>
-                    Lists
-                    </router-link>
-                </div>
-            </ul>
+                <!-- Stretch: make this its own component -->
+                <div class="dropdown settingsDiv">
+                    <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
+                        <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Sign Out</a>
+                        <!-- HERE IS WHERE I WANT TO CALL MODAL TO SHOW TRUE -->
+                        <a
+                            id="linkToUpdateUserName"
+                            @click.prevent="updateUserProfileBtn"
+                            class="dropdown-item"
+                            href="#"
+                        >User Profile</a>
+                        <!-- <a class="dropdown-item" href="#">Delete Account</a> -->
+                    </div>
 
-            <div class="dropdown settingsDiv">
-                <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
-                    <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                    <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Logout</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
                 </div>
             </div>
+        </div>
+
+        <div id="bottomNavBar">
+            <span class="userProfileSpan">
+                <div class="userProfCondDiv" v-show="!user.length">
+                    <font-awesome-icon icon="user" class="faAngle animated bounceIn userIcon" />
+                    <p class="usersName">{{ this.$store.state.user.firstName }}</p>
+                </div>
+            </span>
         </div>
     </nav>
 </template>
 
 <script>
     import firebase from 'firebase/app';
-    import store from 'vuex';
+    import { store } from 'vuex';
+    import userData from '../helpers/data/usersData.js';
+    import { mapActions } from 'vuex';
     import { router } from '../main.js';
     import 'animate.css';
+    import 'jquery';
 
     export default {
         data() {
             return {
-                
+                user: '',
+                updateUser: {
+                    firstName: null,
+                    lastName: null
+                }
             }
         },
         methods: {
+            ...mapActions([
+                'upadteUserProfile',
+                'signOut',
+                'rebuildStateAfterRefresh'
+            ]),
+            updateUserProfileBtn() {
+                // modal call would be good here
+                this.$refs['my-modal'].toggle('#linkToUpdateUserName');
+            },
+            sendUpdatedUserInfo() {
+                this.$refs['my-modal'].toggle('#linkToUpdateUserName');
+                this.$store.dispatch('upadteUserProfile', this.updateUser);
+            },
             firebaseLogout() {
                 firebase.auth().signOut()
                     .then(() => {
                         this.$store.dispatch('signOut');
                         router.push({ name: 'myLogin', path: '/login' })
                     });
-            }
+            },
+        },
+        created() {
+            // check for firebase user and dispatch a login action for axios comparison
+            firebase.auth().onAuthStateChanged((fbUser) => {
+                if (fbUser) {
+                    this.$store.dispatch('rebuildStateAfterRefresh', fbUser);
+                }
+            });
         }
     }
 </script>
@@ -176,7 +234,7 @@
                         box-shadow: none !important;
                     }
                 }
-                .dropdown-toggle:after { 
+                .dropdown-toggle:after {
                     content: none;
                 }
                 .dropdown-menu {
@@ -221,8 +279,43 @@
             }
         }
     }
-    
-    // MOBILE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// LOWER NAVBAR
+    #bottomNavBar {
+        background-color: $bottomNavColor;
+        height: 2.5em;
+        width: 100%;
+        margin-bottom: 1em;
+        color: $fontColorLight;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-end;
+        .userProfileSpan {
+            //min-width: 50px;
+            margin: 10px 10px 0 0;
+            .userProfCondDiv {
+                width: auto;
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: space-evenly;
+                .usersName {
+                    font-size: 12px;
+                    color: $fontColorDark;
+                    font-style: italic;
+                    margin: auto;
+
+                }
+                .userIcon {
+                    color: $mainBlue;
+                    font-size: 15px;
+                    margin-right: 5px;
+                    margin-top: 2px;
+                }
+            }
+        }
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// MOBILE
 @media (max-width: 550px) {
     #myNav {
         height: 6.5em;

@@ -3,7 +3,7 @@
         <transition>
             <router-view name="header-top"></router-view>
         </transition>
-        
+
             <transition>
                 <router-view name="myLogin"></router-view>
             </transition>
@@ -16,7 +16,7 @@
             <transition>
                 <router-view name="myList"></router-view>
             </transition>
-       
+
         <transition>
             <app-footer></app-footer>
          </transition>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import Header from './Components/Header.vue'; 
+    import Header from './Components/Header.vue';
     import Home from './Components/Home.vue';
     import List from './Components/List.vue';
     import SignUp from './Components/SignUp.vue';
