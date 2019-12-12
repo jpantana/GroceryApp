@@ -1,6 +1,6 @@
 <template>
     <div class="itemsWrapper">
-            <div class="itemsUl">
+        <div class="itemsUl">
                 <div
                     :key="`${i}`"
                     v-for="(card, i) in cards"
@@ -9,8 +9,8 @@
                 >
                     <div :id="`${card.id}`" class="singleItemLi">{{ card.name }}</div>
                 </div>
-            </div>
         </div>
+    </div>
 </template>
 
 <script>
@@ -18,7 +18,6 @@
     export default {
         data() {
             return {
-
             }
         },
         props: ['cards', 'groceryListData', 'updateGroceries'],
@@ -28,7 +27,7 @@
                 itemsData.deleteItem(itmId)
                     .then((resp) => {
                        // reload the items section
-                       this.$emit('updateGroceries');
+                        this.$emit('updateGroceries');
                     })
                     .catch(err => console.error(err));
             },
@@ -38,14 +37,13 @@
 
 <style lang="scss" scoped>
     @import '../../public/main.scss';
-
      .itemsWrapper {
-        width: 28em;
+        max-width: 28em;
         margin: auto;
         // background: $bottomNavColor;
         height: 32em;
         .itemsUl {
-            width: 25em;
+            max-width: 25em;
             margin: auto;
             display: flex;
             flex-flow: row wrap;
@@ -59,7 +57,7 @@
                 font-weight: 600;
                 border: .5px solid $shadow;
                 border-radius: 2px;
-                box-shadow: 4px 1px 9px $shadow;
+                box-shadow: $myShadow;
                 background-color: $secondBlue;
                 color: $fontColorLight;
                 object-fit: contain;
@@ -79,4 +77,26 @@
         }
     }
 
+
+    @media (max-width: 588px) {
+        .itemsWrapper {
+            width: 100%;
+            padding: 0.4em;
+            .itemsUl {
+                width: 90%;
+                margin: auto;
+            }
+        }
+    }
+
+    @media (max-width: 387px) {
+        .singleItemDiv {
+            width: 7em !important;
+            height: 3.5em !important;
+            .singleItemLi {
+                width: 7em !important;
+                height: 3.5em !important;
+            }
+        }
+    }
 </style>

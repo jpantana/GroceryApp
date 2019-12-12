@@ -12,32 +12,36 @@
 
             <form class="aniamted fadeIn myFormForDropDown">
                 <div class="form-group dropDownDiv">
-
                     <!-- <label for="GroceryStore">My grocery lists</label> -->
-                        <select
-                            name="GroceryStore"
-                            id="groceryStoreSelect"
-                            class="form-control"
-                            v-model="selected"
-                        >
-                            <option
-                                :key="`${list.id}.key`"
-                                :id="`${list.id}`"
-                                v-for="list in groceryLists"
-                            >{{ list.name }}</option>
-                        </select>
-                        <!-- <font-awesome-icon icon="backspace" class="faBackspace" /> -->
+                    <select
+                        name="GroceryStore"
+                        id="groceryStoreSelect"
+                        class="form-control"
+                        v-model="selected"
+                    >
+                        <option
+                            :key="`${list.id}.key`"
+                            :id="`${list.id}`"
+                            v-for="list in groceryLists"
+                        >{{ list.name }}<font-awesome-icon icon="backspace" class="faBackspace" /></option>
+                    </select>
                 </div>
             </form>
         </div>
 
-         <div
+        <div
             class="makeNewDiv animated fadeIn"
             v-show="addGroceryList">
         <hr>
             <b-container class="formContainer animated fadeIn" fluid>
                 <b-row>
-                    <b-form-input class="fieldInput" v-model.lazy="listName" placeholder="e.g. Brunch List" id="exampleInputAddGroceryList1"></b-form-input>
+                    <b-form-input
+                        class="fieldInput"
+                        v-on:keyup.enter.native="callBackToListWithNewList"
+                        v-model.lazy="listName"
+                        placeholder="e.g. Brunch List"
+                        id="exampleInputAddGroceryList1">
+                    </b-form-input>
                 </b-row>
                 <button @click="callBackToListWithNewList" class="btn makeNewBtn">Add!</button>
             </b-container>
@@ -88,42 +92,44 @@
 
 <style lang="scss" scoped>
     @import '../../public/main.scss';
-
     .selectDiv {
         width: 100%;
+        //width: 20.5em;
         margin: auto;
         margin-top: -1.5em;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-evenly !important;
+        background-color: $secondBlue;
+        box-shadow: $myShadow;
+
         .secondDiv {
             margin: auto;
-            width: 20.5em;
+            width: 20.5;
             display: flex;
             flex-direction: row;
-            justify-content: space-between !important;
-            background-color: $secondBlue;
+            justify-content: center !important;
+            // background-color: $secondBlue;
             border-radius: 4px;
             .plusIcon {
-                background-color: $mainBlue;
+                color: $fontColorLight;
                 font-size: 30px;
                 border-radius: 20px;
-                color: $fontColorLight;
+                background-color: $mainBlue;
                 width: 35px;
                 height: 35px;
-                margin: .3em;
+                margin: .5em .3em 0 0;
                 &:hover {
                     cursor: pointer;
-                    background: $blueGradient;
                     transition: .4s;
-                    box-shadow: 2px 4px 4px lightgray;
                 }
             }
             .myFormForDropDown {
                 // width: 100%;
+                // background-color: pink;
                 .dropDownDiv {
                     width: 17em;
-                    margin-top: .5em;
+                    margin-top: .9em;
                 }
             }
         }
@@ -155,15 +161,52 @@
                     background-color: $mainBlue;
                     color: $fontColorLight;
                     width: 5em;
+                    height: 39.25px;
                     position: relative;
-                    top: -2.38em;
-                    right: -14.5em;
+                    top: -2.45em;
+                    right: -14.6em;
                     &:hover {
                         transition: 1s;
                         transform: scale(1.1);
                         background: $blueGradient;
                     }
                 }
+            }
+        }
+    }
+
+    @media (max-width: 400px) {
+        .selectDiv {
+            width: 100%;
+            .secondDiv {
+                margin-left: auto;
+                width: 20.5em !important;
+                width: auto !important;
+                .myFormForDropDown {
+                    .dropDownDiv {
+                        width: 16em !important;
+                        // margin-top: .5em;
+                    }
+                }
+                .selectDiv {
+                    width: 100%;
+                }
+            }
+        }
+        .formContainer {
+            width: 100% !important;
+            .inputLabel {
+
+            }
+            .fieldInput {
+                border-radius: 10px;
+                height: 39.25px;
+                margin-top: -2em;
+                width: 20em;
+            }
+            .makeNewBtn {
+                top: -2.45em;
+                right: -14.1em !important;
             }
         }
     }

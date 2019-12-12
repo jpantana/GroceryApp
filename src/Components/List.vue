@@ -130,12 +130,20 @@
         margin-top: 0;
         .divWrapper {
             margin: auto;
-            width: 35em;
-            // background-color: $secondBlue;
-            border-radius: 2px;
-            border: 1px solid $shadow;
+            max-width: 35em;
+            max-width: 36.5em;
+            background-color: $bottomNavColor;
+            box-shadow: $myShadow;
             padding: 1.5em;
+            padding: 0em;
         }
     }
-
+    @media (max-width: 516px) {
+        .divE {
+            max-width: 32em;
+            .divWrapper {
+                padding: 0;
+            }
+        }
+    }
 </style>

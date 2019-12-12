@@ -283,6 +283,7 @@
 // LOWER NAVBAR
     #bottomNavBar {
         background-color: $bottomNavColor;
+        // background-color: $secondBlue;
         height: 2.5em;
         width: 100%;
         margin-bottom: 1em;
