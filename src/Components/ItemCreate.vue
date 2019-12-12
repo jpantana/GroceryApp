@@ -105,7 +105,7 @@ export default {
                     }
                     .fieldInput {
                         margin: auto;
-                        width: 20.25em;
+                        width: 18.8em;
                     }
                     .addAnItemBtn {
                         right: -14.4em;

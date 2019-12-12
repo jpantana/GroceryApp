@@ -23,10 +23,15 @@
                             :key="`${list.id}.key`"
                             :id="`${list.id}`"
                             v-for="list in groceryLists"
-                        >{{ list.name }}<font-awesome-icon icon="backspace" class="faBackspace" /></option>
+                        >{{ list.name }}</option>
                     </select>
                 </div>
             </form>
+
+            <font-awesome-icon
+                icon="backspace"
+                class="faBackspace animated fadeIn"
+                @click="deleteListAndItems" />
         </div>
 
         <div
@@ -72,6 +77,9 @@
             callBackToListWithNewList(e) {
                 this.addGroceryList = false;
                 this.$emit('newGroceryList', this.listName);
+            },
+            deleteListAndItems() {
+                this.$emit('deleteGroceryListAndItms');
             }
         },
         watch: {
@@ -94,22 +102,23 @@
     @import '../../public/main.scss';
     .selectDiv {
         width: 100%;
-        //width: 20.5em;
+        min-width: 25em;
         margin: auto;
         margin-top: -1.5em;
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly !important;
+        justify-content: space-around !important;
         background-color: $secondBlue;
         box-shadow: $myShadow;
 
         .secondDiv {
             margin: auto;
-            width: 20.5;
+            width: 19.5em;
+            height: 4.4em;
             display: flex;
             flex-direction: row;
-            justify-content: center !important;
-            // background-color: $secondBlue;
+            justify-content: space-around !important;
+            // background-color: pink;
             border-radius: 4px;
             .plusIcon {
                 color: $fontColorLight;
@@ -128,8 +137,18 @@
                 // width: 100%;
                 // background-color: pink;
                 .dropDownDiv {
-                    width: 17em;
+                    width: 13em;
                     margin-top: .9em;
+                }
+            }
+            .faBackspace {
+                color: $fontColorLight;
+                font-size: 20px;
+                margin-top: 1.23em;
+                &:hover {
+                    transition: 1s;
+                    transform: scale(1.2);
+                    cursor: pointer;
                 }
             }
         }
@@ -175,17 +194,18 @@
         }
     }
 
-    @media (max-width: 400px) {
+    @media (max-width: 401px) {
         .selectDiv {
             width: 100%;
+            min-width: 22em;
             .secondDiv {
                 margin-left: auto;
                 width: 20.5em !important;
                 width: auto !important;
                 .myFormForDropDown {
                     .dropDownDiv {
-                        width: 16em !important;
-                        // margin-top: .5em;
+                        width: 12em !important;
+                        margin-right: .5em;
                     }
                 }
                 .selectDiv {
@@ -210,4 +230,10 @@
             }
         }
     }
+
+    // @media (max-width: 455px) {
+    //     .faBackspace {
+    //         right: -13em !important;
+    //     }
+    // }
 </style>

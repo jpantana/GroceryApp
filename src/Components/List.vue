@@ -9,13 +9,14 @@
             <app-grocery-list
                 @newSelectedList="selected"
                 @newGroceryList="receiveNewGroceryList"
+                @deleteGroceryListAndItms="deleteGroceryListAndItems"
                 :groceryLists="lists"
             ></app-grocery-list>
 
             <app-item-cards
                 :cards="items"
                 :groceryListData="groceryListDat"
-                @updateGroceries="updateListOfGroceries"
+                @deleteItem="deleteThisItem"
             ></app-item-cards>
         </div>
     </div>
@@ -86,6 +87,15 @@
                     })
                     .catch(err => console.error(err));
             },
+            deleteThisItem(itmId) {
+                itemsData.deleteItem(itmId)
+                    .then((resp) => {
+                       // reload the items section
+                        //this.$emit('updateGroceries');
+                        this.updateListOfGroceries();
+                    })
+                    .catch(err => console.error(err));
+            },
             // called on created/added/deleted
             updateListOfGroceries() {
                 itemsData.getUsersItems(this.groceryListDat.groceryListId)
@@ -95,6 +105,7 @@
             },
             // call back from groceryLIST child comp
             selected(payload) {
+                // receives data from whatever selected from drop down in child component
                 this.groceryListDat = payload;
             },
             receiveNewGroceryList(payload) {
@@ -108,6 +119,17 @@
                         // this.propmtCreateList();
                     }).catch(err => console.error(err));
             },
+            deleteGroceryListAndItems() {
+                const deleteId = this.groceryListDat.groceryListId;
+                const itmsToDelete = this.items;
+                itmsToDelete.forEach((itm) => {
+                    this.deleteThisItem(itm.id);
+                });
+                groceryListData.deleteList(deleteId)
+                    .then((res) => {
+                        this.getGroceryLists();
+                    }).catch(err => console.error(err));
+            }
         },
         watch: {
             groceryListDat: function(newVal, oldVal) {

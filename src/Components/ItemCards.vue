@@ -20,16 +20,16 @@
             return {
             }
         },
-        props: ['cards', 'groceryListData', 'updateGroceries'],
+        props: ['cards', 'groceryListData'],
         methods: {
             deleteItem(e) {
                 const itmId = e.target.id;
-                itemsData.deleteItem(itmId)
-                    .then((resp) => {
-                       // reload the items section
-                        this.$emit('updateGroceries');
-                    })
-                    .catch(err => console.error(err));
+                // itemsData.deleteItem(itmId)
+                //     .then((resp) => {
+                //        // reload the items section
+                        this.$emit('deleteItem', itmId);
+                    // })
+                    // .catch(err => console.error(err));
             },
         }
     }
