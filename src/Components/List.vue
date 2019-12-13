@@ -58,7 +58,6 @@
         methods: {
              ...mapActions([
                 'addNewFoodToList',
-                'seeGroceryLists'
             ]),
             getGroceryLists() {
                 firebase.auth().onAuthStateChanged((user) => {

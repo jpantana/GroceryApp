@@ -1,6 +1,12 @@
 <template>
 <!-- SELECT GROCERY LIST (i.e. Party, etc.) -->
     <div class="selectDiv">
+
+    <app-modal
+        :showModal="showModal"
+        @deleteListAndItems="deleteListAndItems"
+    ></app-modal>
+
         <div class="secondDiv">
             <span>
                 <font-awesome-icon
@@ -31,7 +37,7 @@
             <font-awesome-icon
                 icon="backspace"
                 class="faBackspace animated fadeIn"
-                @click="deleteListAndItems" />
+                @click="deleteListAndItemsModal" />
         </div>
 
         <div
@@ -59,13 +65,14 @@
 
 <script>
     import 'animate.css';
-
+    import DeleteModal from './DeleteModal.vue';
     export default {
         data() {
             return {
                 listName: '',
                 addGroceryList: false,
                 selected: '',
+                showModal: false,
                 forItm: {
                     userId: '',
                     groceryListId: 0,
@@ -73,13 +80,25 @@
             }
         },
         props: ['groceryLists'],
+        components: {
+            appModal: DeleteModal
+        },
         methods: {
             callBackToListWithNewList(e) {
                 this.addGroceryList = false;
                 this.$emit('newGroceryList', this.listName);
+                this.listName = '';
             },
-            deleteListAndItems() {
-                this.$emit('deleteGroceryListAndItms');
+            deleteListAndItemsModal() {
+                this.showModal = !this.showModal;
+            },
+            deleteListAndItems(payload) {
+                if (payload == true) {
+                    this.$emit('deleteGroceryListAndItms');
+                } else {
+                    console.error(payload);
+                    // do nothing
+                }
             }
         },
         watch: {

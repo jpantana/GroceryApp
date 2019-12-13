@@ -24,12 +24,7 @@
         methods: {
             deleteItem(e) {
                 const itmId = e.target.id;
-                // itemsData.deleteItem(itmId)
-                //     .then((resp) => {
-                //        // reload the items section
-                        this.$emit('deleteItem', itmId);
-                    // })
-                    // .catch(err => console.error(err));
+                    this.$emit('deleteItem', itmId);
             },
         }
     }
@@ -45,12 +40,13 @@
         .itemsUl {
             max-width: 25em;
             margin: auto;
+            padding: 1em;
             display: flex;
             flex-flow: row wrap;
             justify-content: center;
             object-fit: contain;
             .singleItemDiv {
-                margin: 1em;
+                margin: 0em;
                 width: 8em;
                 height: 4em;
                 font-family: $regFont;
@@ -60,11 +56,25 @@
                 box-shadow: $myShadow;
                 background-color: $secondBlue;
                 color: $fontColorLight;
-                object-fit: contain;
+                // object-fit: contain;
+                word-wrap: break-word;
+                overflow: hidden;
                 &:hover {
                     cursor: pointer;
                     transition: .5s;
-                    box-shadow: 10px 1px 15px $shadow;
+                    background-color: $secondBlueHover;
+                    overflow-y: auto;
+                }
+                &::-webkit-scrollbar {
+                    width: 3px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    box-shadow: inset 0 0 0px transparent;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background: $fontColorLight;
+                    border-radius: 2px;
                 }
                 .singleItemLi {
                     height: 4em;

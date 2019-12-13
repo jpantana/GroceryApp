@@ -1,21 +1,21 @@
 <template>
     <div class="divWrapper animated bounceIn">
-        <h1 class="myH1">{{ h1Text }}</h1>
-        <!-- <div class="addItemBtnDiv1">
-            <button class="btn addAnItemBtn">Add To Your List!</button>
-        </div> -->
+        <app-user-profile></app-user-profile>
     </div>
 </template>
 
 <script>
     import usersData from '../helpers/data/usersData.js';
+    import UserProfile from './UserProfile.vue';
     import 'animate.css';
     export default {
         data() {
             return {
-                h1Text: '',
                 users: []
             }
+        },
+        components: {
+            appUserProfile: UserProfile
         },
         methods: {
             callUsers() {
