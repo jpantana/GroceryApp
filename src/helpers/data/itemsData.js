@@ -10,8 +10,8 @@ const getAllItems = () => new Promise((resolve, reject) => {
         .catch(reject);
 });
 
-const getUsersItems = userId => new Promise((resolve, reject) => {
-    axios.get(`${baseUrl}/item/${userId}`)
+const getUsersItems = groceryStrId => new Promise((resolve, reject) => {
+    axios.get(`${baseUrl}/item/${groceryStrId}`)
         .then(res => {
             resolve(res.data);
         })
@@ -20,5 +20,6 @@ const getUsersItems = userId => new Promise((resolve, reject) => {
 
 const addItem = newItem => axios.post(`${baseUrl}/item`, newItem);
 
+const deleteItem = itm => axios.delete(`${baseUrl}/item/${itm}`);
 
-export default { getUsersItems, getAllItems, addItem }
+export default { getUsersItems, getAllItems, addItem, deleteItem }

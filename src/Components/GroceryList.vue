@@ -1,6 +1,12 @@
 <template>
 <!-- SELECT GROCERY LIST (i.e. Party, etc.) -->
     <div class="selectDiv">
+
+    <app-modal
+        :showModal="showModal"
+        @deleteListAndItems="deleteListAndItems"
+    ></app-modal>
+
         <div class="secondDiv">
             <span>
                 <font-awesome-icon
@@ -12,31 +18,41 @@
 
             <form class="aniamted fadeIn myFormForDropDown">
                 <div class="form-group dropDownDiv">
-
                     <!-- <label for="GroceryStore">My grocery lists</label> -->
-                        <select
-                            name="GroceryStore"
-                            id="groceryStoreSelect"
-                            class="form-control"
-                        >
-                            <option
-                                :key="`${i}option`"
-                                v-for="(list, i) in gLists"
-                            >{{ list.name }}</option>
-                        </select>
+                    <select
+                        name="GroceryStore"
+                        id="groceryStoreSelect"
+                        class="form-control"
+                        v-model="selected"
+                    >
+                        <option
+                            :key="`${list.id}.key`"
+                            :id="`${list.id}`"
+                            v-for="list in groceryLists"
+                        >{{ list.name }}</option>
+                    </select>
                 </div>
             </form>
+
+            <font-awesome-icon
+                icon="backspace"
+                class="faBackspace animated fadeIn"
+                @click="deleteListAndItemsModal" />
         </div>
 
-    <div>{{ groceryLists }} {{ gLists }}</div>
-
-         <div
+        <div
             class="makeNewDiv animated fadeIn"
             v-show="addGroceryList">
         <hr>
             <b-container class="formContainer animated fadeIn" fluid>
                 <b-row>
-                    <b-form-input class="fieldInput" v-model.lazy="listName" placeholder="e.g. Brunch List" id="exampleInputAddGroceryList1"></b-form-input>
+                    <b-form-input
+                        class="fieldInput"
+                        v-on:keyup.enter.native="callBackToListWithNewList"
+                        v-model.lazy="listName"
+                        placeholder="e.g. Brunch List"
+                        id="exampleInputAddGroceryList1">
+                    </b-form-input>
                 </b-row>
                 <button @click="callBackToListWithNewList" class="btn makeNewBtn">Add!</button>
             </b-container>
@@ -49,26 +65,53 @@
 
 <script>
     import 'animate.css';
-
+    import DeleteModal from './DeleteModal.vue';
     export default {
         data() {
             return {
                 listName: '',
                 addGroceryList: false,
-                gLists: this.groceryLists.length == 0 ? ['Make a list'] : this.groceryLists,
+                selected: '',
+                showModal: false,
+                forItm: {
+                    userId: '',
+                    groceryListId: 0,
+                }
             }
         },
-        props: ['isList', 'groceryLists'],
+        props: ['groceryLists'],
+        components: {
+            appModal: DeleteModal
+        },
         methods: {
             callBackToListWithNewList(e) {
-                // console.error(e, this.listName);
                 this.addGroceryList = false;
                 this.$emit('newGroceryList', this.listName);
+                this.listName = '';
+            },
+            deleteListAndItemsModal() {
+                this.showModal = !this.showModal;
+            },
+            deleteListAndItems(payload) {
+                if (payload == true) {
+                    this.$emit('deleteGroceryListAndItms');
+                } else {
+                    console.error(payload);
+                    // do nothing
+                }
             }
         },
         watch: {
-            selectedGrocery: function(val) {
-                this.$emit('newSelectedList', val);
+            selected: function(val) {
+                const items = this.groceryLists;
+                const res = items.filter(itm => itm.name == val);
+                // gives us GroceryStoreId, and UserId (courtesy of drop down)
+                const myItem = {
+                    userId: res[0].userId,
+                    groceryListId: res[0].id
+                };
+                this.forItm = myItem;
+                this.$emit('newSelectedList', myItem);
             },
         }
     }
@@ -76,54 +119,61 @@
 
 <style lang="scss" scoped>
     @import '../../public/main.scss';
-
     .selectDiv {
-        // background-color: pink;
         width: 100%;
-        // background-color: pink;
+        min-width: 25em;
         margin: auto;
+        margin-top: -1.5em;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-around !important;
+        background-color: $secondBlue;
+        box-shadow: $myShadow;
+
         .secondDiv {
             margin: auto;
-            width: 20.5em;
+            width: 19.5em;
+            height: 4.4em;
             display: flex;
             flex-direction: row;
-            justify-content: space-between !important;
+            justify-content: space-around !important;
+            // background-color: pink;
+            border-radius: 4px;
             .plusIcon {
-                background-color: $mainBlue;
+                color: $fontColorLight;
                 font-size: 30px;
                 border-radius: 20px;
-                color: $fontColorLight;
+                background-color: $mainBlue;
                 width: 35px;
                 height: 35px;
-                margin: .3em;
+                margin: .5em .3em 0 0;
                 &:hover {
                     cursor: pointer;
-                    background: $blueGradient;
                     transition: .4s;
-                    box-shadow: 2px 4px 4px lightgray;
                 }
             }
             .myFormForDropDown {
-                //width: 100%;
+                // width: 100%;
+                // background-color: pink;
                 .dropDownDiv {
-                    width: 17em;
-                    // float: right;
-                    margin-top: .5em;
-                    // display: flex;
-                    // flex-direction: column;
-                    // justify-content: center;
+                    width: 13em;
+                    margin-top: .9em;
+                }
+            }
+            .faBackspace {
+                color: $fontColorLight;
+                font-size: 20px;
+                margin-top: 1.23em;
+                &:hover {
+                    transition: 1s;
+                    transform: scale(1.2);
+                    cursor: pointer;
                 }
             }
         }
         .makeNewDiv {
             display: flex;
             flex-direction: column;
-            // margin-bottom: 1em;
-            // background-color: $bottomNavColor;
-            // padding: 1em;
             border-radius: 2px;
             width: auto;
             height: 3.2em;
@@ -149,9 +199,10 @@
                     background-color: $mainBlue;
                     color: $fontColorLight;
                     width: 5em;
+                    height: 39.25px;
                     position: relative;
-                    top: -2.38em;
-                    right: -14.5em;
+                    top: -2.45em;
+                    right: -14.6em;
                     &:hover {
                         transition: 1s;
                         transform: scale(1.1);
@@ -161,4 +212,47 @@
             }
         }
     }
+
+    @media (max-width: 401px) {
+        .selectDiv {
+            width: 100%;
+            min-width: 22em;
+            .secondDiv {
+                margin-left: auto;
+                width: 20.5em !important;
+                width: auto !important;
+                .myFormForDropDown {
+                    .dropDownDiv {
+                        width: 12em !important;
+                        margin-right: .5em;
+                    }
+                }
+                .selectDiv {
+                    width: 100%;
+                }
+            }
+        }
+        .formContainer {
+            width: 100% !important;
+            .inputLabel {
+
+            }
+            .fieldInput {
+                border-radius: 10px;
+                height: 39.25px;
+                margin-top: -2em;
+                width: 20em;
+            }
+            .makeNewBtn {
+                top: -2.45em;
+                right: -14.1em !important;
+            }
+        }
+    }
+
+    // @media (max-width: 455px) {
+    //     .faBackspace {
+    //         right: -13em !important;
+    //     }
+    // }
 </style>

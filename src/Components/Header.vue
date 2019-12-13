@@ -2,26 +2,16 @@
     <nav>
     <!-- MODAL HERE -->
         <b-modal ref="my-modal" hide-footer title="Tell us more about yourself...">
-            <div class="d-block text-center">
-                <b-container fluid>
-                    <b-row>
-                        <label for="getFirstName">Firstname</label>
-                        <b-form-input  v-model.lazy="updateUser.firstName" placeholder="Enter your firstname" id="getFirstName"></b-form-input>
-                    </b-row>
-                    <b-row>
-                        <label for="getLastName">LastName</label>
-                        <b-form-input  v-model.lazy="updateUser.lastName" placeholder="Enter your lastname" id="getLastName"></b-form-input>
-                    </b-row>
-                    <button @click.prevent="sendUpdatedUserInfo" class="btn btn-primary">Save Changes</button>
-                </b-container>
-            </div>
+            <app-header-modal
+                :updateUser="updateUser"
+                @updatedUserInfo="sendUpdatedUserInfo"
+            >
+            </app-header-modal>
         </b-modal>
-
         <div  id="myNav">
         <!-- BRAND -->
             <div class="brandDiv animated rotateIn">
                 <a class="navbarBrand" href="#">Sweet<span id="carts">Carts</span></a>
-                <!-- <p class="brandTag">shop together. stay together</p> -->
             </div>
 
             <div class="navItemsWrapper" id="navItemsWrapperId">
@@ -53,24 +43,10 @@
                     </div>
                 </ul>
 
-                <!-- Stretch: make this its own component -->
-                <div class="dropdown settingsDiv">
-                    <button class="btn btn-secondary dropdown-toggle myDropdownBtn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" no-caret>
-                        <font-awesome-icon icon="angle-down" class="faAngle animated bounceIn" />
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="logoutBtn dropdown-item" href="#" @click.prevent="firebaseLogout" >Sign Out</a>
-                        <!-- HERE IS WHERE I WANT TO CALL MODAL TO SHOW TRUE -->
-                        <a
-                            id="linkToUpdateUserName"
-                            @click.prevent="updateUserProfileBtn"
-                            class="dropdown-item"
-                            href="#"
-                        >User Profile</a>
-                        <!-- <a class="dropdown-item" href="#">Delete Account</a> -->
-                    </div>
-
-                </div>
+                <app-dropdown
+                    @firebaseLogout="firebaseLogout"
+                    @updateUserProfile="updateUserProfileBtn"
+                ></app-dropdown>
             </div>
         </div>
 
@@ -93,6 +69,8 @@
     import { router } from '../main.js';
     import 'animate.css';
     import 'jquery';
+    import HeaderDropdown from './HeaderDropdown.vue';
+    import HeaderModal from './HeaderModal.vue';
 
     export default {
         data() {
@@ -104,6 +82,10 @@
                 }
             }
         },
+        components: {
+            appDropdown: HeaderDropdown,
+            appHeaderModal: HeaderModal
+        },
         methods: {
             ...mapActions([
                 'upadteUserProfile',
@@ -111,7 +93,6 @@
                 'rebuildStateAfterRefresh'
             ]),
             updateUserProfileBtn() {
-                // modal call would be good here
                 this.$refs['my-modal'].toggle('#linkToUpdateUserName');
             },
             sendUpdatedUserInfo() {
@@ -218,37 +199,6 @@
             // DROPDOWN
             .settingsDiv {
                 padding: 0;
-                .myDropdownBtn {
-                    border: none;
-                    background-color: transparent;
-                    height: 45px;
-                    width: 45px;
-                    margin: 10px -20px 0 30px;
-                    &:hover {
-                        border: none !important;
-                        background-color: transparent;
-                        outline: 0;
-                    }
-                    &:focus {
-                        outline: none !important;
-                        box-shadow: none !important;
-                    }
-                }
-                .dropdown-toggle:after {
-                    content: none;
-                }
-                .dropdown-menu {
-                    background-color:rgba(206, 202, 202, 0.5);
-                }
-                .faAngle {
-                    color: $fontColorLight;
-                    font-size: 27px;
-                    &:hover {
-                        cursor: pointer;
-                        transform: scale(1.2);
-                        transition: .8s;
-                    }
-                }
             }
         }
         .brandDiv {
@@ -283,6 +233,7 @@
 // LOWER NAVBAR
     #bottomNavBar {
         background-color: $bottomNavColor;
+        // background-color: $secondBlue;
         height: 2.5em;
         width: 100%;
         margin-bottom: 1em;
@@ -356,9 +307,6 @@
     }
     .listWrapper {
         margin: auto 15px !important;
-    }
-    .dropdown-toggle {
-        margin: 2em auto !important;
     }
 }
 </style>

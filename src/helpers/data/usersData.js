@@ -17,5 +17,13 @@ const addNewUser = newUser => axios.post(`${baseUrl}/user`, newUser);
 
 const updateUser = (uid, updatedUser) => axios.put(`${baseUrl}/user/${uid}`, updatedUser);
 
+const deleteUser = uid => axios.delete(`${baseUrl}/user/${uid}`);
 
-export default { getAllUsers, getSingleUser, addNewUser, updateUser };
+
+export default {
+    getAllUsers,
+    getSingleUser,
+    addNewUser,
+    updateUser,
+    deleteUser,
+};

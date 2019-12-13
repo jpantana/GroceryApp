@@ -26,6 +26,8 @@ export const store = new Vuex.Store({
       localStorage.setItem('user-token', payload.token);
       // SEE IF USER ALREADY EXISTS
       firebase.auth().onAuthStateChanged((user) => {
+        console.log(user);
+        console.log(user.photoURL);
         usersData.getSingleUser(user.uid)
         .then((response) => {
           if (!response.length) {
@@ -35,6 +37,8 @@ export const store = new Vuex.Store({
               "LastName": payload.LastName,
               "Email": user.email,
               "Uid": user.uid,
+              // "photoURL": user.photoURL,
+              // "FamilyId": payload.FamilyId,
             };
             usersData.addNewUser(newUser)
               .then((res) => {
@@ -49,7 +53,6 @@ export const store = new Vuex.Store({
               })
               .catch(err => console.error(err));
           } else if (response.length) {
-          // } else if (!payload.firsttimeUser) {
             // code for returning user
             usersData.getSingleUser(user.uid)
               .then((res) => {
@@ -178,7 +181,7 @@ export const store = new Vuex.Store({
         commit('UpdateOrAddUserName', payload);
       },
       addNewFoodToList: ({ commit }, payload) => {
-        console.log(payload, 'new food item');
+        //console.log(payload, 'new food item');
         // groceryListData.getMyGroceryList
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
@@ -187,9 +190,9 @@ export const store = new Vuex.Store({
           })
           .catch(err => console.error(err));
       },
-      seeGroceryLists: ({ commit }, payload) => {
+      deleteThisUser: ({ commit }, payload) => {
         console.error(payload);
-        groceryListData.makeGroceryList(payload)
+        usersData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
       }

@@ -6,14 +6,21 @@ $hoverLightFont: rgb(235, 232, 232);
 @import '../node_modules/bootstrap-vue/src/index.scss';
 
 $mainBlue: rgb(48, 203, 250);
+$secondBlue: rgb(45, 84, 143);
+$secondBlueHover: rgb(80, 142, 235);
+$footerBlue: rgb(196, 211, 233);
 $mainWhite: rgb(255, 255, 255);
 $mainPink: rgb(255,105,180);
 
-$bottomNavColor: rgb(235, 235, 235);
+$myShadow: 0px 0px 30px 5px rgba(10,10,10,0.2);
+
+// $bottomNavColor: rgb(235, 235, 235);
+$bottomNavColor: rgb(255, 255, 255);
 $brandFont: 'Faster One', cursive;
 $regFont: 'Lato', sans-serif;
 $slantFont: 'Damion', cursive;
 $thickFont: 'Open Sans', sans-serif;
+$shadow: #dddfe2;
 
 $blueGradient: //linear-gradient(217deg, rgb(255, 255, 255), rgba(211, 206, 206, 0.906) 70.71%),
                // linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),

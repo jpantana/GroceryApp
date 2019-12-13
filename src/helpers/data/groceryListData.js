@@ -12,4 +12,6 @@ const getMyGroceryList = userId => new Promise((resolve, reject) => {
 
 const makeGroceryList = newGroceryListObj => axios.post(`${baseUrl}/grocerylist`, newGroceryListObj);
 
-export default { getMyGroceryList, makeGroceryList }
+const deleteList = deleteId => axios.delete(`${baseUrl}/grocerylist/${deleteId}`);
+
+export default { getMyGroceryList, makeGroceryList, deleteList }
