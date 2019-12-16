@@ -18,6 +18,9 @@
                         v-on:keyup.enter.native="updateThisUser"
                     ></b-form-input>
                 </b-row>
+                <b-row>
+                    <p>Start a group to share lists with friends, family, and collegues</p>
+                </b-row>
                 <button @click.prevent="updateThisUser" class="btn submitBtn">Save Changes</button>
             </b-container>
         </div>

@@ -5,7 +5,8 @@ import usersData from '../helpers/data/usersData.js';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import itemsData from '../helpers/data/itemsData.js';
-import groceryListData from '../helpers/data/groceryListData.js';
+import familyData from '../helpers/data/familyData.js';
+// import groceryListData from '../helpers/data/groceryListData.js';
 
 Vue.use(Vuex);
 
@@ -18,7 +19,8 @@ export const store = new Vuex.Store({
       uid: null,
       authed: false,
       token: ''
-    }
+    },
+    family: []
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -26,8 +28,6 @@ export const store = new Vuex.Store({
       localStorage.setItem('user-token', payload.token);
       // SEE IF USER ALREADY EXISTS
       firebase.auth().onAuthStateChanged((user) => {
-        console.log(user);
-        console.log(user.photoURL);
         usersData.getSingleUser(user.uid)
         .then((response) => {
           if (!response.length) {
@@ -48,7 +48,8 @@ export const store = new Vuex.Store({
                   email: res.data.email,
                   uid: res.data.uid,
                   authed: true,
-                  token: localStorage.getItem('user-token')
+                  token: localStorage.getItem('user-token'),
+                  familyId: res.data.familyId
                 };
               })
               .catch(err => console.error(err));
@@ -62,7 +63,8 @@ export const store = new Vuex.Store({
                   email: res[0].email,
                   uid: res[0].uid,
                   authed: true,
-                  token: localStorage.getItem('user-token')
+                  token: localStorage.getItem('user-token'),
+                  familyId: res[0].familyId
                 };
               })
               .catch(err => console.error(err));
@@ -85,7 +87,8 @@ export const store = new Vuex.Store({
         authed: true,
         token: payload.token,
         firstName: payload.FirstName,
-        lastName: payload.LastName
+        lastName: payload.LastName,
+        familyId: payload.familyId
       };
     },
     // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
@@ -103,6 +106,9 @@ export const store = new Vuex.Store({
             })
             .catch(err => console.error(err));
         }).catch(err => console.error(err));
+    },
+    getMyFamily (state, payload) {
+      state.family = payload;
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -171,7 +177,8 @@ export const store = new Vuex.Store({
                       FirstName: !resp[0].firstName ? '' : resp[0].firstName,
                       LastName: !resp[0].lastName ? '' : resp[0].lastName,
                       Uid: resp[0].uid,
-                      Email: resp[0].email
+                      Email: resp[0].email,
+                      FamilyId: resp[0].familyId
                     });
                   // }
               }).catch(err => console.error(err));
@@ -191,10 +198,15 @@ export const store = new Vuex.Store({
           .catch(err => console.error(err));
       },
       deleteThisUser: ({ commit }, payload) => {
-        console.error(payload);
         usersData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
+      },
+      getFamilyMembers: ({ commit }) => {
+        familyData.getMyFamily(1)
+          .then((res) => {
+            commit('getMyFamily', res);
+          }).catch(err => console.error('not getting my family', err));
       }
     }
 });
