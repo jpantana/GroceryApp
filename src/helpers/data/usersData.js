@@ -13,6 +13,12 @@ const getSingleUser = uid => new Promise((resolve, reject) => {
         .catch(reject);
 });
 
+const getSingleUserByEmailLookup = email => new Promise((resolve, reject) => {
+    axios.get(`${baseUrl}/user/lookup/${email}`)
+        .then(res => resolve(res.data))
+        .catch(reject);
+});
+
 const addNewUser = newUser => axios.post(`${baseUrl}/user`, newUser);
 
 const updateUser = (uid, updatedUser) => axios.put(`${baseUrl}/user/${uid}`, updatedUser);
@@ -23,6 +29,7 @@ const deleteUser = uid => axios.delete(`${baseUrl}/user/${uid}`);
 export default {
     getAllUsers,
     getSingleUser,
+    getSingleUserByEmailLookup,
     addNewUser,
     updateUser,
     deleteUser,

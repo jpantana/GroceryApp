@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const baseUrl = "https://localhost:44349";
 
-const getMyGroceryList = userId => new Promise((resolve, reject) => {
-    axios.get(`${baseUrl}/grocerylist/${userId}`)
+const getMyGroceryList = familyId => new Promise((resolve, reject) => {
+    axios.get(`${baseUrl}/grocerylist/${familyId}`)
         .then(res => {
             resolve(res.data);
         })

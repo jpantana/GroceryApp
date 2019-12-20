@@ -3,18 +3,18 @@
         <ul class="familyUl">
             <li
                 :key="`${i}member`"
-                v-show="familyMembers.length > 0"
-                v-for="(member, i) in familyMembers"
+                v-show="family.length > 0"
+                v-for="(member, i) in family"
                 class="familyLi animated fadeIn"
             >{{ member.firstName }} {{ member.lastName}}
             </li>
         </ul>
-        <div class="animated bounceIn">
+        <!-- <div class="animated bounceIn">
             <button
                 class="btn famBtn"
                 @click.prevent="getFamily"
             >See My Family</button>
-        </div>
+        </div> -->
         <div class="inviteDiv">
             <label for="inviteInput">Invite someone to join your family</label>
             <b-form-input
@@ -35,6 +35,8 @@
 </template>
 
 <script>
+import usersData from '../helpers/data/usersData.js';
+import invitationData from '../helpers/data/invitationData.js';
 import 'animate.css';
 export default {
     data() {
@@ -43,15 +45,30 @@ export default {
             emailToInvite: '',
         }
     },
-    props: [],
+    props: ['family'],
     methods: {
-        getFamily() {
-            this.familyMembers = this.$store.state.family;
-        },
+        // getFamily() {
+        //     this.familyMembers = this.$store.state.family;
+        // },
         addBtnClicked(e) {
             // code here. axios send link
-            // make an invite db table (userId, senderId, familyId, dateCreated, )
-            console.error('sent', e);
+            usersData.getSingleUserByEmailLookup(this.emailToInvite)
+                .then((res) =>{
+                    const newInvite = {
+                        FamilyId: this.$store.state.user.familyId,
+                        ToId: res[0].id,
+                        FromId: this.$store.state.user.id
+                    };
+                    invitationData.sendInvite(newInvite)
+                        .then((rez) => {
+                            // console.error(rez);
+                            if (rez) {
+                                alert('invite sent');
+                            }
+                            })
+                        .catch(err => console.error(err))
+                }).catch(err => console.error(err));
+
         }
     },
     created() {

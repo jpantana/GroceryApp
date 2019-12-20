@@ -39,6 +39,9 @@
                 items: [],
                 lists: [],
                 userId: '',
+                // wip
+                userFamilyId: '',
+                //
                 groceryListDat: {
                     groceryListId: 0,
                     userId: ''
@@ -64,10 +67,11 @@
                     userData.getSingleUser(user.uid)
                         .then((res) => {
                             this.userId = res[0].id;
+                            this.userFamilyId = res[0].familyId;
                             // Go Ahead and get this user data so when new item is added it can just be appended to item obj that passes to store
                             this.newFood.userId = res[0].id;
                             // now that we know the user, we can get the grocery list...
-                            groceryListData.getMyGroceryList(res[0].id)
+                            groceryListData.getMyGroceryList(this.userFamilyId)
                                 .then((resp) => {
                                     if (!resp.length) {
                                        // do nothing
@@ -86,21 +90,42 @@
                     })
                     .catch(err => console.error(err));
             },
-            deleteThisItem(itmId) {
-                itemsData.deleteItem(itmId)
-                    .then((resp) => {
-                       // reload the items section
-                        //this.$emit('updateGroceries');
+            deleteThisItem(itmId, deleteListId) {
+                if (itmId != 0) {
+                    itemsData.deleteItem(itmId)
+                        .then((resp) => {
+                            if (deleteListId) {
+                                groceryListData.deleteList(deleteListId)
+                                    .then((res) => {
+                                        this.getGroceryLists();
+                                    }).catch(err => console.error(err));
+                            }
+                            this.updateListOfGroceries();
+                        })
+                        .catch(err => console.error(err));
+                    } else {
+                        groceryListData.deleteList(deleteListId)
+                            .then((res) => {
+                                this.getGroceryLists();
+                            }).catch(err => console.error(err));
                         this.updateListOfGroceries();
+                    }
+            },
+             deleteGroceryListAndItems() {
+                const deleteListId = this.groceryListDat.groceryListId;
+                const itmsToDelete = this.items;
+                itmsToDelete.length > 0
+                    ? itmsToDelete.forEach((itm) => {
+                        this.deleteThisItem(itm.id, deleteListId);
                     })
-                    .catch(err => console.error(err));
+                    : this.deleteThisItem(0, deleteListId);
             },
             // called on created/added/deleted
             updateListOfGroceries() {
                 itemsData.getUsersItems(this.groceryListDat.groceryListId)
                     .then((res) => {
                         this.items = res;
-                    }).catch(err => console.error(err))
+                    }).catch(err => console.error('no grocery list created', err))
             },
             // call back from groceryLIST child comp
             selected(payload) {
@@ -110,23 +135,12 @@
             receiveNewGroceryList(payload) {
                 const item = {
                     Name: payload,
-                    UserId: this.userId
+                    FamilyId: this.userFamilyId,
                 };
                 groceryListData.makeGroceryList(item)
                     .then((res) => {
                         this.getGroceryLists();
                         // this.propmtCreateList();
-                    }).catch(err => console.error(err));
-            },
-            deleteGroceryListAndItems() {
-                const deleteId = this.groceryListDat.groceryListId;
-                const itmsToDelete = this.items;
-                itmsToDelete.forEach((itm) => {
-                    this.deleteThisItem(itm.id);
-                });
-                groceryListData.deleteList(deleteId)
-                    .then((res) => {
-                        this.getGroceryLists();
                     }).catch(err => console.error(err));
             }
         },

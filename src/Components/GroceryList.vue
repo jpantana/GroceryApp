@@ -96,7 +96,6 @@
                 if (payload == true) {
                     this.$emit('deleteGroceryListAndItms');
                 } else {
-                    console.error(payload);
                     // do nothing
                 }
             }

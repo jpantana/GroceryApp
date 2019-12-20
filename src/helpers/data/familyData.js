@@ -10,4 +10,6 @@ const getMyFamily = familyId => new Promise((resolve, reject) => {
         .catch(reject);
 });
 
-export default { getMyFamily }
+const createFamily = familyName => axios.post(`${baseUrl}/family`, familyName);
+
+export default { getMyFamily, createFamily }

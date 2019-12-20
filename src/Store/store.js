@@ -15,12 +15,14 @@ export const store = new Vuex.Store({
     user: {
       firstName: '',
       lastName: '',
+      familyId: '',
       email: null,
       uid: null,
       authed: false,
-      token: ''
+      token: '',
+      id: '',
     },
-    family: []
+    // family: []
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -32,27 +34,42 @@ export const store = new Vuex.Store({
         .then((response) => {
           if (!response.length) {
             // code block for firstime google auth
-            const newUser = {
-              "FirstName": payload.FirstName,
-              "LastName": payload.LastName,
-              "Email": user.email,
-              "Uid": user.uid,
-              // "photoURL": user.photoURL,
-              // "FamilyId": payload.FamilyId,
-            };
-            usersData.addNewUser(newUser)
-              .then((res) => {
-                state.user = {
-                  firstName: res.data.firstName,
-                  lastName: res.data.lastName,
-                  email: res.data.email,
-                  uid: res.data.uid,
-                  authed: true,
-                  token: localStorage.getItem('user-token'),
-                  familyId: res.data.familyId
+            // First, a user needs to create a Family
+            let famLastName = '';
+            let famFirstName = ''
+            if (user.displayName) {
+              famLastName = user.displayName.split(" ");
+              famFirstName = famLastName[0];
+              famLastName = famLastName[famLastName.length - 1];
+            } else {
+              famLastName = payload.LastName;
+            }
+            const newFam = { Name: famLastName };
+            familyData.createFamily(newFam)
+              .then((famData) => {
+                // famData now created
+                const newUser = {
+                  "FirstName": !payload.FirstName ? famFirstName :  payload.FirstName,
+                  "LastName": !payload.LastName ? famLastName : payload.LastName,
+                  "Email": user.email,
+                  "Uid": user.uid,
+                  "FamilyId": famData.data.id,
                 };
+                usersData.addNewUser(newUser)
+                  .then((res) => {
+                    state.user = {
+                      firstName: res.data.firstName,
+                      lastName: res.data.lastName,
+                      email: res.data.email,
+                      uid: res.data.uid,
+                      authed: true,
+                      token: localStorage.getItem('user-token'),
+                      familyId: res.data.familyId,
+                      id: res.data.id
+                    };
+                  })
               })
-              .catch(err => console.error(err));
+              .catch(err => console.error('no family created and/or user', err)); // two catch's seemed to make for duplicate data posts
           } else if (response.length) {
             // code for returning user
             usersData.getSingleUser(user.uid)
@@ -64,13 +81,14 @@ export const store = new Vuex.Store({
                   uid: res[0].uid,
                   authed: true,
                   token: localStorage.getItem('user-token'),
-                  familyId: res[0].familyId
+                  familyId: res[0].familyId,
+                  id: res[0].id
                 };
               })
               .catch(err => console.error(err));
           }
         })
-        .catch();
+        .catch(err => console.error(err));
       });
       router.push({ name: 'myHome', path: '/' });
     },
@@ -88,7 +106,8 @@ export const store = new Vuex.Store({
         token: payload.token,
         firstName: payload.FirstName,
         lastName: payload.LastName,
-        familyId: payload.familyId
+        familyId: payload.familyId,
+        id: payload.Id
       };
     },
     // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
@@ -107,9 +126,9 @@ export const store = new Vuex.Store({
             .catch(err => console.error(err));
         }).catch(err => console.error(err));
     },
-    getMyFamily (state, payload) {
-      state.family = payload;
-    }
+    // getMyFamily (state, payload) {
+    //   state.family = payload;
+    // }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
   actions: {
@@ -178,18 +197,16 @@ export const store = new Vuex.Store({
                       LastName: !resp[0].lastName ? '' : resp[0].lastName,
                       Uid: resp[0].uid,
                       Email: resp[0].email,
-                      FamilyId: resp[0].familyId
+                      familyId: resp[0].familyId,
+                      Id: resp[0].id,
                     });
-                  // }
-              }).catch(err => console.error(err));
+              }).catch(err => console.error(err, 'no user on refresh'));
       },
       // needs to receive payload from user input catpure in Header.vue
       upadteUserProfile: ({ commit }, payload) => {
         commit('UpdateOrAddUserName', payload);
       },
       addNewFoodToList: ({ commit }, payload) => {
-        //console.log(payload, 'new food item');
-        // groceryListData.getMyGroceryList
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
           .then((resp) => {
@@ -202,11 +219,13 @@ export const store = new Vuex.Store({
           .then()
           .catch(err => console.error(err));
       },
-      getFamilyMembers: ({ commit }) => {
-        familyData.getMyFamily(1)
-          .then((res) => {
-            commit('getMyFamily', res);
-          }).catch(err => console.error('not getting my family', err));
-      }
+      // getFamilyMembers: ({ commit }, payload) => {
+      //   // needs to be passed a family id
+      //   // console.error(payload, 'store payload');
+      //   familyData.getMyFamily(payload)
+      //     .then((res) => {
+      //       commit('getMyFamily', res);
+      //     }).catch(err => console.error('not getting my family', err));
+      // }
     }
 });
