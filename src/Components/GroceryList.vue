@@ -8,7 +8,7 @@
     ></app-modal>
 
         <div class="secondDiv">
-            <span>
+            <span class="spanPlus">
                 <font-awesome-icon
                     icon="plus"
                     class="faPlus animated bounceIn plusIcon"
@@ -26,7 +26,7 @@
                         v-model="selected"
                     >
                         <option
-                            :key="`${list.id}.key`"
+                            :key="list.id"
                             :id="`${list.id}`"
                             v-for="list in groceryLists"
                         >{{ list.name }}</option>
@@ -71,12 +71,13 @@
             return {
                 listName: '',
                 addGroceryList: false,
+                // selected: this.groceryLists.length > 1 ? '' : this.groceryLists[0].name,
                 selected: '',
                 showModal: false,
                 forItm: {
                     userId: '',
                     groceryListId: 0,
-                }
+                },
             }
         },
         props: ['groceryLists'],
@@ -112,6 +113,12 @@
                 this.forItm = myItem;
                 this.$emit('newSelectedList', myItem);
             },
+            groceryLists: function(val) {
+                this.selected = this.groceryLists[0].name;
+            }
+        },
+        mounted() {
+
         }
     }
 </script>
@@ -138,17 +145,23 @@
             justify-content: space-around !important;
             // background-color: pink;
             border-radius: 4px;
-            .plusIcon {
-                color: $fontColorLight;
-                font-size: 30px;
-                border-radius: 20px;
-                background-color: $mainBlue;
-                width: 35px;
-                height: 35px;
-                margin: .5em .3em 0 0;
+            .spanPlus {
                 &:hover {
-                    cursor: pointer;
                     transition: .4s;
+                    transform: scale(1.15);
+                }
+                .plusIcon {
+                    color: $fontColorLight;
+                    font-size: 30px;
+                    border-radius: 20px;
+                    background-color: $mainBlue;
+                    width: 35px;
+                    height: 35px;
+                    margin: .5em .3em 0 0;
+                    &:hover {
+                        cursor: pointer;
+                        transition: .4s;
+                    }
                 }
             }
             .myFormForDropDown {

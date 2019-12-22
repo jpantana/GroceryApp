@@ -21,8 +21,8 @@ export const store = new Vuex.Store({
       authed: false,
       token: '',
       id: '',
-    },
-    // family: []
+      photoURL: ''
+    }
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -54,6 +54,7 @@ export const store = new Vuex.Store({
                   "Email": user.email,
                   "Uid": user.uid,
                   "FamilyId": famData.data.id,
+                  "PhotoURL": payload.photoURL
                 };
                 usersData.addNewUser(newUser)
                   .then((res) => {
@@ -65,7 +66,8 @@ export const store = new Vuex.Store({
                       authed: true,
                       token: localStorage.getItem('user-token'),
                       familyId: res.data.familyId,
-                      id: res.data.id
+                      id: res.data.id,
+                      photoURL: res.data.PhotoURL
                     };
                   })
               })
@@ -82,7 +84,8 @@ export const store = new Vuex.Store({
                   authed: true,
                   token: localStorage.getItem('user-token'),
                   familyId: res[0].familyId,
-                  id: res[0].id
+                  id: res[0].id,
+                  photoURL: res[0].PhotoURL
                 };
               })
               .catch(err => console.error(err));
@@ -107,7 +110,8 @@ export const store = new Vuex.Store({
         firstName: payload.FirstName,
         lastName: payload.LastName,
         familyId: payload.familyId,
-        id: payload.Id
+        id: payload.Id,
+        photoURL: payload.PhotoURL
       };
     },
     // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
@@ -140,7 +144,8 @@ export const store = new Vuex.Store({
                 token: res.credential.accessToken,
                 firsttimeUser: res.additionalUserInfo.isNewUser,
                 FirstName: null,
-                LastName: null
+                LastName: null,
+                photoURL: res.user.photoURL
               });
           });
       },
@@ -188,7 +193,7 @@ export const store = new Vuex.Store({
         });
       },
       rebuildStateAfterRefresh: ({ commit }, payload) => {
-        // payload returns user from FB request
+        // payload returns user from FB request in Header (gets called on login too and need to fix)
           usersData.getSingleUser(payload.uid)
               .then((resp) => {
                     commit('refreshUserState', {
@@ -199,6 +204,7 @@ export const store = new Vuex.Store({
                       Email: resp[0].email,
                       familyId: resp[0].familyId,
                       Id: resp[0].id,
+                      PhotoURL: resp[0].photoURL
                     });
               }).catch(err => console.error(err, 'no user on refresh'));
       },
@@ -218,14 +224,6 @@ export const store = new Vuex.Store({
         usersData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
-      },
-      // getFamilyMembers: ({ commit }, payload) => {
-      //   // needs to be passed a family id
-      //   // console.error(payload, 'store payload');
-      //   familyData.getMyFamily(payload)
-      //     .then((res) => {
-      //       commit('getMyFamily', res);
-      //     }).catch(err => console.error('not getting my family', err));
-      // }
+      }
     }
 });

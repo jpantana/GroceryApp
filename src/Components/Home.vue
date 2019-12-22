@@ -6,14 +6,8 @@
             ></app-family>
         </div>
 
-        <div class="divWrapper animated bounceIn">
+        <div class="divWrapper animated fadeIn">
             <app-user-profile></app-user-profile>
-        </div>
-
-        <div>Invites
-            <ul>
-                <li :key="`${i}invite`" v-for="(invite, i) in invites">{{ invite.fromId }}</li>
-            </ul>
         </div>
     </div>
 </template>
@@ -25,13 +19,14 @@
     import familyData from '../helpers/data/familyData.js';
     import { store } from 'vuex';
     import 'animate.css';
-import invitationData from '../helpers/data/invitationData';
+    import invitationData from '../helpers/data/invitationData';
     export default {
         data() {
             return {
                 users: [],
                 family: [],
-                invites: []
+                invites: [],
+                recipient: ''
             }
         },
         components: {
@@ -40,25 +35,17 @@ import invitationData from '../helpers/data/invitationData';
         },
         methods: {
             callGetFamily() {
-                const famId = this.$store.state.user.familyId;
-                familyData.getMyFamily(famId)
-                .then((res) => {
-                    this.family = res;
-                }).catch(err => console.error('not getting my family', err));
-            },
-            listenForInvites() {
-                const recipId = this.$store.state.user.id;
-                invitationData.getInvites(recipId)
+                setTimeout(() => {
+                    const famId = this.$store.state.user.familyId;
+                    familyData.getMyFamily(famId)
                     .then((res) => {
-                        this.invites = res;
-                    }).catch(err => console.error(err));
-            }
+                        this.family = res;
+                    }).catch(err => console.error('not getting my family', err));
+                },2500);
+            },
 
         },
         created() {
-            this.listenForInvites();
-        },
-        mounted() {
             this.callGetFamily();
         }
     }
@@ -69,23 +56,39 @@ import invitationData from '../helpers/data/invitationData';
     .containerDiv {
         display: flex;
         flex-direction: row;
+        justify-content: space-between !important;
+        padding: 0 1em;
+        width: 40em;
+        margin: auto;
         .divWrapper {
             margin: auto;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: center;
             background-color: transparent;
-            width: 90%;
             height: auto;
         }
         .sideNavHome {
-            margin-right: auto;
-            margin-left: 2em;
+            border-radius: 2px;
+            margin-top: 1em;
             background-color: $fontColorLight;
-            min-width:13em;
-            max-width:13em;
-            min-height: 25em;
+            max-width:16em;
+            min-width:16em;
             box-shadow: $myShadow;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .containerDiv {
+            display: flex;
+            flex-direction: column;
+            padding: 1em 0em;
+            width: 100%;
+        }
+        .sideNavHome {
+            margin: auto !important;
+            min-width: 19em !important;
+            max-width: 19em !important;
         }
     }
 </style>

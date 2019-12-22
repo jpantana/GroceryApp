@@ -10,8 +10,10 @@ const getInvites = id => new Promise((resolve, reject) => {
         .catch(reject);
 });
 
+const deleteInvitation = id => axios.delete(`${baseUrl}/invitation/${id}`);
 
 export default {
     sendInvite,
     getInvites,
+    deleteInvitation,
 }

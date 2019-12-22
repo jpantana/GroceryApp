@@ -1,22 +1,22 @@
 <template>
     <div class="familyContainer">
-        <ul class="familyUl">
-            <li
+        <p class="fmHeader">Your Family</p>
+        <div class="holdsBubblesDiv">
+            <div
+                class="familyBubbleDiv animated bounceIn"
                 :key="`${i}member`"
                 v-show="family.length > 0"
                 v-for="(member, i) in family"
-                class="familyLi animated fadeIn"
-            >{{ member.firstName }} {{ member.lastName}}
-            </li>
-        </ul>
-        <!-- <div class="animated bounceIn">
-            <button
-                class="btn famBtn"
-                @click.prevent="getFamily"
-            >See My Family</button>
-        </div> -->
+            >
+                <div
+                    class="familyBubbleText animated fadeIn"
+                >{{ member.firstName.split("")[0] }} {{ member.lastName.split("")[0] }}
+                </div>
+            </div>
+        </div>
+        <hr>
         <div class="inviteDiv">
-            <label for="inviteInput">Invite someone to join your family</label>
+            <label for="inviteInput" class="inviteLabel">Invite someone to join your family</label>
             <b-form-input
                 type="email"
                 placeholder="email address"
@@ -47,9 +47,6 @@ export default {
     },
     props: ['family'],
     methods: {
-        // getFamily() {
-        //     this.familyMembers = this.$store.state.family;
-        // },
         addBtnClicked(e) {
             // code here. axios send link
             usersData.getSingleUserByEmailLookup(this.emailToInvite)
@@ -68,7 +65,6 @@ export default {
                             })
                         .catch(err => console.error(err))
                 }).catch(err => console.error(err));
-
         }
     },
     created() {
@@ -81,40 +77,52 @@ export default {
     @import '../../public/main.scss';
     .familyContainer {
         padding: 1em;
-        .famBtn {
-            border: 1px solid $mainBlue;
-            background-color: $mainBlue;
-            color: $fontColorLight;
-            width: 100%;
-            &:hover {
-                transition: .7s;
-                transform: scale(1.1);
-            }
-        }
-        .familyUl {
+        .fmHeader {
+            color: rgb(161, 161, 161);
+            font-family: $regFont;
+            letter-spacing: .1ch;
+            font-weight: 800;
+            margin: auto;
             padding: 0;
-            .familyLi {
-                list-style-type: none;
-                width: 100%;
-                margin: 1em 0;
-                text-align: center;
-                padding: 4px;
-                border-radius: 3px;
+            text-align: center;
+        }
+        .holdsBubblesDiv {
+            width: 100%;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            margin-bottom: 1.5em;
+            // background-color: pink;
+        .familyBubbleDiv {
+                width: 3.5em;
+                height: 3.5em;
                 background-color: $secondBlue;
+                border-radius: 3.5em;
                 color: $fontColorLight;
-                font-family: $regFont;
-                font-size: 12px;
-                font-style: italic;
-                &:hover {
-                    box-shadow: $myShadow;
-                    background-color: $secondBlueHover;
-                    transition: .7s;
-                    cursor: pointer;
-                    transform: scale(1.05);
+                box-shadow: $myShadow;
+                margin: .3em;
+                .familyBubbleText {
+                    font-family: $regFont;
+                    font-weight: 800;
+                    font-size: 24px;
+                    letter-spacing: -.15ch;
+                    color: $fontColorLight;
+                    position: relative;
+                    top: 10px;
+                    right: -14px;
                 }
             }
         }
-        .fieldInput {
+        .inviteDiv {
+            margin-top: 1em;
+            .inviteLabel {
+                font-family: $regFont;
+                color: rgb(161, 161, 161);
+                font-size: 11px;
+                text-align: center;
+                margin-left: 2.5em;
+            }
+            .fieldInput {
                 border-radius: 10px;
                 height: 39.25px;
                 font-size: 14px;
@@ -128,7 +136,7 @@ export default {
                 height: 39.25px;
                 position: relative;
                 top: -2.44em;
-                right: -7.3em;
+                right: -9.4em;
                 &:hover {
                     transition: .7s;
                     background: $blueGradient;
@@ -138,5 +146,27 @@ export default {
                     border: none;
                 }
             }
+        }
+    }
+
+    @media (max-width: 650px) {
+        .familyContainer {
+            padding-bottom: 0;
+            margin-bottom: 0;
+            .holdsBubblesDiv {
+                margin-bottom: 0 !important;
+            }
+            .inviteDiv {
+                margin: 0 !important;
+                padding: 0 !important;
+                .inviteLabel {
+                    margin-left: 5em;
+                }
+                .addFamilyBtn {
+                    position: relative;
+                    right: -11.4em;
+                }
+            }
+        }
     }
 </style>

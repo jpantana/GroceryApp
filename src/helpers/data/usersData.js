@@ -13,6 +13,12 @@ const getSingleUser = uid => new Promise((resolve, reject) => {
         .catch(reject);
 });
 
+const getSingleUserById = id => new Promise((resolve, reject) => {
+    axios.get(`${baseUrl}/user/invite/${id}`)
+        .then(res => resolve(res.data))
+        .catch(reject);
+});
+
 const getSingleUserByEmailLookup = email => new Promise((resolve, reject) => {
     axios.get(`${baseUrl}/user/lookup/${email}`)
         .then(res => resolve(res.data))
@@ -25,6 +31,8 @@ const updateUser = (uid, updatedUser) => axios.put(`${baseUrl}/user/${uid}`, upd
 
 const deleteUser = uid => axios.delete(`${baseUrl}/user/${uid}`);
 
+const changeFamily = (toId, famId) => axios.put(`${baseUrl}/user/${toId}/${famId}`);
+
 
 export default {
     getAllUsers,
@@ -33,4 +41,6 @@ export default {
     addNewUser,
     updateUser,
     deleteUser,
+    getSingleUserById,
+    changeFamily,
 };

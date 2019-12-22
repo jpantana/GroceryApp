@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+// import VueLoaderPlugin from 'vue-loader/lib/plugin';
 import firebase from 'firebase/app';
 import App from './App.vue';
 import { firebaseApp } from './helpers/data/connection.js';
