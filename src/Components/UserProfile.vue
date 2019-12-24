@@ -1,6 +1,6 @@
 <template>
     <div class="myContainer">
-        <h2 class="h2Name animated bounceIn">{{ this.$store.state.user.firstName }}</h2>
+        <h2 class="h2Name animated bounceIn">{{ this.$store.state.user.firstName }} {{ this.$store.state.user.lastName }}</h2>
         <div class="makeDivCirclePic">
             <font-awesome-icon v-show="profilePic.length == 0" icon="user" class="faUser aniamated fadeIn userIcon" />
             <div
