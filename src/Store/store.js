@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { router } from '../main.js'
-import usersData from '../helpers/data/usersData.js';
+import userData from '../helpers/data/usersData.js';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import itemsData from '../helpers/data/itemsData.js';
@@ -22,7 +22,8 @@ export const store = new Vuex.Store({
       token: '',
       id: '',
       photoURL: ''
-    }
+    },
+    keyForUserProfilePicture: 1,
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -30,7 +31,7 @@ export const store = new Vuex.Store({
       localStorage.setItem('user-token', payload.token);
       // SEE IF USER ALREADY EXISTS
       firebase.auth().onAuthStateChanged((user) => {
-        usersData.getSingleUser(user.uid)
+        userData.getSingleUser(user.uid)
         .then((response) => {
           if (!response.length) {
             // code block for firstime google auth
@@ -56,7 +57,7 @@ export const store = new Vuex.Store({
                   "FamilyId": famData.data.id,
                   "PhotoURL": payload.photoURL
                 };
-                usersData.addNewUser(newUser)
+                userData.addNewUser(newUser)
                   .then((res) => {
                     state.user = {
                       firstName: res.data.firstName,
@@ -74,7 +75,7 @@ export const store = new Vuex.Store({
               .catch(err => console.error('no family created and/or user', err)); // two catch's seemed to make for duplicate data posts
           } else if (response.length) {
             // code for returning user
-            usersData.getSingleUser(user.uid)
+            userData.getSingleUser(user.uid)
               .then((res) => {
                 state.user = {
                   firstName: res[0].firstName,
@@ -119,20 +120,25 @@ export const store = new Vuex.Store({
       state.user.firstName = payload.firstName;
       state.user.lastName = payload.lastName;
       // get the user to update
-      usersData.getSingleUser(state.user.uid)
+      userData.getSingleUser(state.user.uid)
         .then((resp) => {
           payload.Uid = resp[0].uid;
           // now, update said user
-          usersData.updateUser(resp[0].uid, payload)
+          userData.updateUser(resp[0].uid, payload)
             .then((r) => {
               // r gets updated to state in another code block
             })
             .catch(err => console.error(err));
         }).catch(err => console.error(err));
     },
-    // getMyFamily (state, payload) {
-    //   state.family = payload;
-    // }
+    updateUserProfileImageAction (state, payload) {
+      const updatedUserObj = { PhotoURL: payload }
+      userData.updateProfileImage(state.user.uid, updatedUserObj)
+        .then().catch(err => console.error(err));
+    },
+    userProfileImageAfterUpload (state, payload) {
+      state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+    }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
   actions: {
@@ -194,7 +200,7 @@ export const store = new Vuex.Store({
       },
       rebuildStateAfterRefresh: ({ commit }, payload) => {
         // payload returns user from FB request in Header (gets called on login too and need to fix)
-          usersData.getSingleUser(payload.uid)
+          userData.getSingleUser(payload.uid)
               .then((resp) => {
                     commit('refreshUserState', {
                       token: localStorage.getItem('user-token'),
@@ -212,6 +218,12 @@ export const store = new Vuex.Store({
       upadteUserProfile: ({ commit }, payload) => {
         commit('UpdateOrAddUserName', payload);
       },
+      updateUserProfileImage: ({ commit }, payload) => {
+        commit('updateUserProfileImageAction', payload);
+      },
+      refreshUserProfileImageAfterUpload: ({ commit }, payload) => {
+        commit('userProfileImageAfterUpload');
+      },
       addNewFoodToList: ({ commit }, payload) => {
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
@@ -221,7 +233,7 @@ export const store = new Vuex.Store({
           .catch(err => console.error(err));
       },
       deleteThisUser: ({ commit }, payload) => {
-        usersData.deleteUser(payload.uid)
+        userData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
       }

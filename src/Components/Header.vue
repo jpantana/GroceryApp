@@ -5,6 +5,7 @@
             <app-header-modal
                 :updateUser="updateUser"
                 @updatedUserInfo="sendUpdatedUserInfo"
+                @closeModal="updateUserProfileBtn"
             >
             </app-header-modal>
         </b-modal>

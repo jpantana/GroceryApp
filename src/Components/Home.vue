@@ -7,7 +7,9 @@
         </div>
 
         <div class="divWrapper animated fadeIn">
-            <app-user-profile></app-user-profile>
+            <app-user-profile
+                :key="this.$store.state.keyForUserProfilePicture"
+            ></app-user-profile>
         </div>
     </div>
 </template>
@@ -26,7 +28,9 @@
                 users: [],
                 family: [],
                 invites: [],
-                recipient: ''
+                recipient: '',
+                newProfilePicture: false,
+                newProfilePictureCounter: 1,
             }
         },
         components: {
@@ -42,8 +46,7 @@
                         this.family = res;
                     }).catch(err => console.error('not getting my family', err));
                 },2500);
-            },
-
+            }
         },
         created() {
             this.callGetFamily();

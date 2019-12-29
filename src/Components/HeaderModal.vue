@@ -22,80 +22,36 @@
                 <b-row>
                     <p>Start a group to share lists with friends, family, and collegues</p>
                 </b-row>
-                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~  upload profile picture  ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-                <div>
-                    <div>
-                        <p>Upload an image to Firebase:</p>
-                        <input type="file" @change="previewImage" class="uploadBtn" accept="image/*" >
-                    </div>
-                    <div>
-                        <p>Progress: {{uploadValue.toFixed()+"%"}}
-                        <progress id="progress" :value="uploadValue" max="100" ></progress>  </p>
-                    </div>
-                    <div v-if="imageData!=null">
-                        <img class="preview" :src="picture">
-                        <br>
-                        <button @click="onUpload">Upload</button>
-                    </div>
-                </div>
                 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~  submit  ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                 <button @click.prevent="updateThisUser" class="btn submitBtn">Save Changes</button>
+
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~  upload profile picture  ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <app-upload-image
+                    @closeThisModal="closeModalMid"
+                ></app-upload-image>
             </b-container>
         </div>
 </template>
 
 <script>
-    import firebase from 'firebase/app';
-    import storage from 'firebase/storage';
+    import UploadImage from './UploadImage.vue';
     export default {
-        data() {
-            return {
-                imageData: null,
-                uploadValue: 0,
-                picture: null
-            }
+        components: {
+            appUploadImage: UploadImage
         },
-        props: ['updateUser'],
+        props: ['updateUser', 'closeModal'],
         methods: {
             updateThisUser() {
                 this.$emit('updatedUserInfo');
             },
-            previewImage(event) {
-                this.uploadValue=0;
-                this.picture=null;
-                this.imageData = event.target.files[0];
-            },
-            onUpload () {
-                this.picture=null;
-                const storageRef = firebase.storage().ref(`${this.imageData.name}`).put(this.imageData);
-                storageRef.on(`state_changed`,snapshot => {
-                    this.uploadValue = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
-                }, err=>{console.log(err.message)},
-                () => {
-                    this.uploadValue = 100;
-                    storageRef.snapshot.ref.getDownloadURL().then((url)=>{
-                    this.picture = url;
-                    });
-                })
-            },
-        },
-        watch: {
-            uploadTask: function() {
-            this.uploadTask.on('state_changed', sp => {
-                    this.progressUpload = Math.floor(sp.bytesTransferred / sp.totalBytes * 100)
-                },
-                null,
-                () => {
-                    this.uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-                    this.$emit('url', downloadURL)
-                    })
-
-                })
+            // calls back to updateUserProfileBtn which toggles my-modal
+            // this function passes to upload-image comp and it uses closingModal funct to emit to this func, then back to header
+            closeModalMid() {
+                this.$emit('closeModal');
             }
         }
     }
-
 </script>
 
 <style lang="scss" scoped>
@@ -111,13 +67,5 @@
             transform: scale(1.03);
             color: $fontColorLight;
         }
-    }
-    .uploadBtn {
-
-    }
-    img.preview {
-        width: 15em;
-        border-radius: 100%;
-        margin-bottom: 10px;
     }
 </style>

@@ -23,23 +23,12 @@
     import { mapState } from 'vuex';
     import userData from '../helpers/data/usersData.js';
     export default {
+        props: ['receivedNewProfilePicture', 'changedProfilePicture'],
         data() {
             return {
                 profilePic: ''
             }
         },
-        // computed: {
-        //     profilePic () {
-        //         const photo = this.$store.state.user.photoURL;
-        //         if (photo) {
-        //             // on refresh it shows up, and everythin is updated in vue, but html is rendering only once and obviously before
-        //             this.photo = photo;
-        //             return photo;
-        //         } else {
-        //             return false
-        //         }
-        //     }
-        // },
         watch: {
             profilePic: function(val) {
                 this.photo = val;

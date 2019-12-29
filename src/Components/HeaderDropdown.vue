@@ -29,6 +29,11 @@
     import 'jquery';
     export default {
         props: ['updateUserProfileBtn', 'firebaseLogout'],
+        data() {
+            return {
+
+            }
+        },
         methods: {
             updateUserProfile() {
                 this.$emit('updateUserProfile');

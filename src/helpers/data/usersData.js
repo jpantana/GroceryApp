@@ -33,6 +33,7 @@ const deleteUser = uid => axios.delete(`${baseUrl}/user/${uid}`);
 
 const changeFamily = (toId, famId) => axios.put(`${baseUrl}/user/${toId}/${famId}`);
 
+const updateProfileImage = (uid, imgUrl) => axios.put(`${baseUrl}/user/uploadimage/${uid}`, imgUrl);
 
 export default {
     getAllUsers,
@@ -43,4 +44,5 @@ export default {
     deleteUser,
     getSingleUserById,
     changeFamily,
+    updateProfileImage,
 };
