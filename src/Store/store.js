@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { router } from '../main.js'
-import usersData from '../helpers/data/usersData.js';
+import userData from '../helpers/data/usersData.js';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import itemsData from '../helpers/data/itemsData.js';
-import groceryListData from '../helpers/data/groceryListData.js';
+import familyData from '../helpers/data/familyData.js';
+// import groceryListData from '../helpers/data/groceryListData.js';
 
 Vue.use(Vuex);
 
@@ -14,11 +15,15 @@ export const store = new Vuex.Store({
     user: {
       firstName: '',
       lastName: '',
+      familyId: '',
       email: null,
       uid: null,
       authed: false,
-      token: ''
-    }
+      token: '',
+      id: '',
+      photoURL: ''
+    },
+    keyForUserProfilePicture: 1,
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -26,35 +31,51 @@ export const store = new Vuex.Store({
       localStorage.setItem('user-token', payload.token);
       // SEE IF USER ALREADY EXISTS
       firebase.auth().onAuthStateChanged((user) => {
-        console.log(user);
-        console.log(user.photoURL);
-        usersData.getSingleUser(user.uid)
+        userData.getSingleUser(user.uid)
         .then((response) => {
           if (!response.length) {
             // code block for firstime google auth
-            const newUser = {
-              "FirstName": payload.FirstName,
-              "LastName": payload.LastName,
-              "Email": user.email,
-              "Uid": user.uid,
-              // "photoURL": user.photoURL,
-              // "FamilyId": payload.FamilyId,
-            };
-            usersData.addNewUser(newUser)
-              .then((res) => {
-                state.user = {
-                  firstName: res.data.firstName,
-                  lastName: res.data.lastName,
-                  email: res.data.email,
-                  uid: res.data.uid,
-                  authed: true,
-                  token: localStorage.getItem('user-token')
+            // First, a user needs to create a Family
+            let famLastName = '';
+            let famFirstName = ''
+            if (user.displayName) {
+              famLastName = user.displayName.split(" ");
+              famFirstName = famLastName[0];
+              famLastName = famLastName[famLastName.length - 1];
+            } else {
+              famLastName = payload.LastName;
+            }
+            const newFam = { Name: famLastName };
+            familyData.createFamily(newFam)
+              .then((famData) => {
+                // famData now created
+                const newUser = {
+                  "FirstName": !payload.FirstName ? famFirstName :  payload.FirstName,
+                  "LastName": !payload.LastName ? famLastName : payload.LastName,
+                  "Email": user.email,
+                  "Uid": user.uid,
+                  "FamilyId": famData.data.id,
+                  "PhotoURL": payload.photoURL
                 };
+                userData.addNewUser(newUser)
+                  .then((res) => {
+                    state.user = {
+                      firstName: res.data.firstName,
+                      lastName: res.data.lastName,
+                      email: res.data.email,
+                      uid: res.data.uid,
+                      authed: true,
+                      token: localStorage.getItem('user-token'),
+                      familyId: res.data.familyId,
+                      id: res.data.id,
+                      photoURL: res.data.PhotoURL
+                    };
+                  })
               })
-              .catch(err => console.error(err));
+              .catch(err => console.error('no family created and/or user', err)); // two catch's seemed to make for duplicate data posts
           } else if (response.length) {
             // code for returning user
-            usersData.getSingleUser(user.uid)
+            userData.getSingleUser(user.uid)
               .then((res) => {
                 state.user = {
                   firstName: res[0].firstName,
@@ -62,13 +83,16 @@ export const store = new Vuex.Store({
                   email: res[0].email,
                   uid: res[0].uid,
                   authed: true,
-                  token: localStorage.getItem('user-token')
+                  token: localStorage.getItem('user-token'),
+                  familyId: res[0].familyId,
+                  id: res[0].id,
+                  photoURL: res[0].PhotoURL
                 };
               })
               .catch(err => console.error(err));
           }
         })
-        .catch();
+        .catch(err => console.error(err));
       });
       router.push({ name: 'myHome', path: '/' });
     },
@@ -85,7 +109,10 @@ export const store = new Vuex.Store({
         authed: true,
         token: payload.token,
         firstName: payload.FirstName,
-        lastName: payload.LastName
+        lastName: payload.LastName,
+        familyId: payload.familyId,
+        id: payload.Id,
+        photoURL: payload.PhotoURL
       };
     },
     // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
@@ -93,16 +120,24 @@ export const store = new Vuex.Store({
       state.user.firstName = payload.firstName;
       state.user.lastName = payload.lastName;
       // get the user to update
-      usersData.getSingleUser(state.user.uid)
+      userData.getSingleUser(state.user.uid)
         .then((resp) => {
           payload.Uid = resp[0].uid;
           // now, update said user
-          usersData.updateUser(resp[0].uid, payload)
+          userData.updateUser(resp[0].uid, payload)
             .then((r) => {
               // r gets updated to state in another code block
             })
             .catch(err => console.error(err));
         }).catch(err => console.error(err));
+    },
+    updateUserProfileImageAction (state, payload) {
+      const updatedUserObj = { PhotoURL: payload }
+      userData.updateProfileImage(state.user.uid, updatedUserObj)
+        .then().catch(err => console.error(err));
+    },
+    userProfileImageAfterUpload (state, payload) {
+      state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -115,7 +150,8 @@ export const store = new Vuex.Store({
                 token: res.credential.accessToken,
                 firsttimeUser: res.additionalUserInfo.isNewUser,
                 FirstName: null,
-                LastName: null
+                LastName: null,
+                photoURL: res.user.photoURL
               });
           });
       },
@@ -163,26 +199,32 @@ export const store = new Vuex.Store({
         });
       },
       rebuildStateAfterRefresh: ({ commit }, payload) => {
-        // payload returns user from FB request
-          usersData.getSingleUser(payload.uid)
+        // payload returns user from FB request in Header (gets called on login too and need to fix)
+          userData.getSingleUser(payload.uid)
               .then((resp) => {
                     commit('refreshUserState', {
                       token: localStorage.getItem('user-token'),
                       FirstName: !resp[0].firstName ? '' : resp[0].firstName,
                       LastName: !resp[0].lastName ? '' : resp[0].lastName,
                       Uid: resp[0].uid,
-                      Email: resp[0].email
+                      Email: resp[0].email,
+                      familyId: resp[0].familyId,
+                      Id: resp[0].id,
+                      PhotoURL: resp[0].photoURL
                     });
-                  // }
-              }).catch(err => console.error(err));
+              }).catch(err => console.error(err, 'no user on refresh'));
       },
       // needs to receive payload from user input catpure in Header.vue
       upadteUserProfile: ({ commit }, payload) => {
         commit('UpdateOrAddUserName', payload);
       },
+      updateUserProfileImage: ({ commit }, payload) => {
+        commit('updateUserProfileImageAction', payload);
+      },
+      refreshUserProfileImageAfterUpload: ({ commit }, payload) => {
+        commit('userProfileImageAfterUpload');
+      },
       addNewFoodToList: ({ commit }, payload) => {
-        //console.log(payload, 'new food item');
-        // groceryListData.getMyGroceryList
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
           .then((resp) => {
@@ -191,8 +233,7 @@ export const store = new Vuex.Store({
           .catch(err => console.error(err));
       },
       deleteThisUser: ({ commit }, payload) => {
-        console.error(payload);
-        usersData.deleteUser(payload.uid)
+        userData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
       }

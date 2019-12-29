@@ -43,14 +43,10 @@
 <style lang="scss" scoped>
     @import '../public/main.scss';
     .myContainer {
-        // background-color: $secondBlue;
         background-color: $shadow;
         width: 100%;
         min-height: 100vh;
         .footer {
-            // bottom: 0;
-            // margin-top: 100%;
-            // width: 100%;
             position: fixed;
             bottom: 0;
             left: 0;

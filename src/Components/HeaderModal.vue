@@ -15,20 +15,40 @@
                         v-model.lazy="updateUser.lastName"
                         placeholder="Enter your lastname"
                         id="getLastName"
+                        ref="myFiles"
                         v-on:keyup.enter.native="updateThisUser"
                     ></b-form-input>
                 </b-row>
+                <b-row>
+                    <p>Start a group to share lists with friends, family, and collegues</p>
+                </b-row>
+
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~  submit  ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                 <button @click.prevent="updateThisUser" class="btn submitBtn">Save Changes</button>
+
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~  upload profile picture  ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <app-upload-image
+                    @closeThisModal="closeModalMid"
+                ></app-upload-image>
             </b-container>
         </div>
 </template>
 
 <script>
+    import UploadImage from './UploadImage.vue';
     export default {
-        props: ['updateUser'],
+        components: {
+            appUploadImage: UploadImage
+        },
+        props: ['updateUser', 'closeModal'],
         methods: {
             updateThisUser() {
                 this.$emit('updatedUserInfo');
+            },
+            // calls back to updateUserProfileBtn which toggles my-modal
+            // this function passes to upload-image comp and it uses closingModal funct to emit to this func, then back to header
+            closeModalMid() {
+                this.$emit('closeModal');
             }
         }
     }

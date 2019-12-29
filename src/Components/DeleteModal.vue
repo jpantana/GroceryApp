@@ -18,7 +18,7 @@
                 yesDelete: false,
             }
         },
-        props: ['showModal'],
+        props: ['showModal', 'deleteListAndItems'],
         methods: {
             deleteStatus(e) {
                 this.yesDelete = e;
