@@ -49,23 +49,30 @@ export default {
     methods: {
         addBtnClicked(e) {
             // code here. axios send link
-            usersData.getSingleUserByEmailLookup(this.emailToInvite)
-                .then((res) =>{
-                    const newInvite = {
-                        FamilyId: this.$store.state.user.familyId,
-                        ToId: res[0].id,
-                        FromId: this.$store.state.user.id
-                    };
-                    invitationData.sendInvite(newInvite)
-                        .then((rez) => {
-                            // console.error(rez);
-                            if (rez) {
-                                alert('invite sent');
-                            }
-                            })
-                        .catch(err => console.error(err))
-                }).catch(err => console.error(err));
-        }
+            if (this.emailToInvite.length > 1) {
+                usersData.getSingleUserByEmailLookup(this.emailToInvite)
+                    .then((res) =>{
+                        if (res) {
+                            const newInvite = {
+                                FamilyId: this.$store.state.user.familyId,
+                                ToId: res[0].id,
+                                FromId: this.$store.state.user.id
+                            };
+                            invitationData.sendInvite(newInvite)
+                                .then((rez) => {
+                                    if (rez) {
+                                        alert('invite sent');
+                                        this.emailToInvite = '';
+                                        }
+                                    })
+                                .catch(err => console.error('that user does not exist', err))
+                        } else {
+                            alert('Sorry. That user email does not exist');
+                            this.emailToInvite = '';
+                        }
+                    }).catch(err => console.error(err, 'error at getSingleUserByEmailLookup'));
+            }
+        },
     },
     created() {
 

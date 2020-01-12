@@ -160,7 +160,8 @@
                             if (this.invites.length == 1) {
                                 // Deletes the invitation
                                 invitationData.deleteInvitation(this.invites[0].id)
-                                    .then().catch(err => console.error(err));
+                                    .then(() => this.$state.dispatch('showFamilyMemberBubbles'))
+                                    .catch(err => console.error(err));
                              }
                     }).catch(err => console.error(err));
                 } else if (!bool) {

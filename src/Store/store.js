@@ -6,7 +6,6 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import itemsData from '../helpers/data/itemsData.js';
 import familyData from '../helpers/data/familyData.js';
-// import groceryListData from '../helpers/data/groceryListData.js';
 
 Vue.use(Vuex);
 
@@ -24,6 +23,8 @@ export const store = new Vuex.Store({
       photoURL: ''
     },
     keyForUserProfilePicture: 1,
+    whoIsInMyFamily: 1,
+    family: [],
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -68,7 +69,7 @@ export const store = new Vuex.Store({
                       token: localStorage.getItem('user-token'),
                       familyId: res.data.familyId,
                       id: res.data.id,
-                      photoURL: res.data.PhotoURL
+                      photoURL: res.data.photoURL
                     };
                   })
               })
@@ -134,10 +135,22 @@ export const store = new Vuex.Store({
     updateUserProfileImageAction (state, payload) {
       const updatedUserObj = { PhotoURL: payload }
       userData.updateProfileImage(state.user.uid, updatedUserObj)
-        .then().catch(err => console.error(err));
+        .then(() => {
+          state.user.photoURL = payload;
+        }).catch(err => console.error(err));
     },
     userProfileImageAfterUpload (state, payload) {
       state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+    },
+    showFamilyMemberBubbles (state, payload) {
+      setTimeout(() => {
+        const famId = state.user.familyId;
+          familyData.getMyFamily(famId)
+            .then((res) => {
+                state.family = res;
+                state.whoIsInMyFamily = state.whoIsInMyFamily + 1; 
+            }).catch(err => console.error('not getting my family', err));  
+      }, 3000);
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -167,6 +180,7 @@ export const store = new Vuex.Store({
                 FirstName: payload.firstName,
                 LastName: payload.lastName
               });
+              commit('userProfileImageAfterUpload');
             }).catch(err => alert(err.message));
           } else {
             alert('Please enter a valid email address and password');
@@ -236,6 +250,12 @@ export const store = new Vuex.Store({
         userData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
-      }
+      },
+     showFamilyMembers: ({ commit }, payload) => {
+        commit('showFamilyMemberBubbles');
+     },
+     causeRefreshOfFamilyBubbles: ({ commit }, payload) => {
+        commit('updateFamilyBubbles');
+     }
     }
 });

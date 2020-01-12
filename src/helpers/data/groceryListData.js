@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const baseUrl = "https://localhost:44349";
+const baseUrl = "https://sweetcarts.azurewebsites.net";
+// const baseUrl = "https://localhost:5001";
+// const baseUrl = "https://localhost:44349";
 
 const getMyGroceryList = familyId => new Promise((resolve, reject) => {
     axios.get(`${baseUrl}/grocerylist/${familyId}`)

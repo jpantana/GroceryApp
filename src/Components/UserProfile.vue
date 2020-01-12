@@ -20,10 +20,9 @@
 <script>
     import 'animate.css';
     import firebase from 'firebase/app';
-    import { mapState } from 'vuex';
     import userData from '../helpers/data/usersData.js';
+    
     export default {
-        props: ['receivedNewProfilePicture', 'changedProfilePicture'],
         data() {
             return {
                 profilePic: ''
@@ -41,7 +40,6 @@
                 }).catch(err => console.error(err));
             });
         }
-
     }
 </script>
 
@@ -83,6 +81,9 @@
                 .profilePic {
                     height: 15em;
                     width: auto;
+                    display: block;
+                    margin-right: auto;
+                    margin-left: auto;
                 }
             }
         }

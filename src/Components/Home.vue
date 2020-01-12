@@ -2,7 +2,8 @@
     <div class="containerDiv">
         <div class="sideNavHome animated fadeIn">
             <app-family
-                :family="family"
+                :family="this.$store.state.family"
+                :key="this.$store.state.whoIsInMyFamily"
             ></app-family>
         </div>
 
@@ -31,6 +32,7 @@
                 recipient: '',
                 newProfilePicture: false,
                 newProfilePictureCounter: 1,
+                profilePic: ''
             }
         },
         components: {
@@ -38,18 +40,16 @@
             appFamily: Family
         },
         methods: {
-            callGetFamily() {
-                setTimeout(() => {
-                    const famId = this.$store.state.user.familyId;
-                    familyData.getMyFamily(famId)
-                    .then((res) => {
-                        this.family = res;
-                    }).catch(err => console.error('not getting my family', err));
-                },2500);
-            }
+            // getProfilePic() {
+            //     this.profilePic = this.$store.state.user.photoURL;
+                
+            // }
         },
-        created() {
-            this.callGetFamily();
+        mounted() {
+            this.$store.dispatch('showFamilyMembers');
+            // setTimeout(() => {
+            //     this.getProfilePic()
+            // },3000);
         }
     }
 </script>

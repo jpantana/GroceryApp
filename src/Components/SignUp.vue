@@ -194,4 +194,20 @@
             z-index: 100;
         }
     }
+
+    @media (max-width: 400px) {
+        .divWrapper {
+                width: 20em !important;
+                span {
+                    font-size: 18px !important;
+                    margin-left: -20px;
+                }
+                #googleIcon {
+                    max-height: 2em;
+                    max-width: 2em;
+                    margin-right: -1em;
+                    float: left;
+                }
+            }
+    }
 </style>
