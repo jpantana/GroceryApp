@@ -5,7 +5,6 @@
                 <b-container fluid>
                     <p>Doing so will delete both this list, and any items saved in this list.</p>
                     <button @click.prevent="deleteStatus(true)" class="btn myBtn">Delete</button>
-                    <!-- <button @click.prevent="deleteStatus(false)" class="btn myBtn">Cancel</button> -->
                 </b-container>
             </div>
         </b-modal>
@@ -24,6 +23,7 @@
                 this.yesDelete = e;
                 this.$refs['my-modal'].toggle('#linkToUpdateUserName');
                 this.$emit('deleteListAndItems', this.yesDelete);
+                this.$store.dispatch('increaseKeyCountGroceryList');
             }
         },
         watch: {

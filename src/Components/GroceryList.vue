@@ -18,7 +18,6 @@
 
             <form class="aniamted fadeIn myFormForDropDown">
                 <div class="form-group dropDownDiv">
-                    <!-- <label for="GroceryStore">My grocery lists</label> -->
                     <select
                         name="GroceryStore"
                         id="groceryStoreSelect"
@@ -71,7 +70,6 @@
             return {
                 listName: '',
                 addGroceryList: false,
-                // selected: this.groceryLists.length > 1 ? '' : this.groceryLists[0].name,
                 selected: '',
                 showModal: false,
                 forItm: {

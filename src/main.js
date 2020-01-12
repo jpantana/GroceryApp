@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import VueLoaderPlugin from 'vue-loader/lib/plugin';
 import firebase from 'firebase/app';
 import App from './App.vue';
 import { firebaseApp } from './helpers/data/connection.js';
@@ -28,7 +27,6 @@ export const router = new VueRouter({
   store
 });
 
-// NOT WORKING AT ALL
 router.beforeEach((to, from, next) => {
   if (localStorage.getItem('user-token') === null) {
     if (to.path == '/login') {
@@ -46,9 +44,6 @@ var vm = new Vue({
     store,
     render: h => h(App),
     base: firebaseApp(),
-    methods: {
-
-    },
     created() {
 
     }

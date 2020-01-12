@@ -6,7 +6,6 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import itemsData from '../helpers/data/itemsData.js';
 import familyData from '../helpers/data/familyData.js';
-// import groceryListData from '../helpers/data/groceryListData.js';
 
 Vue.use(Vuex);
 
@@ -24,6 +23,8 @@ export const store = new Vuex.Store({
       photoURL: ''
     },
     keyForUserProfilePicture: 1,
+    whoIsInMyFamily: 1,
+    keyForGroceryList: 1
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -68,7 +69,7 @@ export const store = new Vuex.Store({
                       token: localStorage.getItem('user-token'),
                       familyId: res.data.familyId,
                       id: res.data.id,
-                      photoURL: res.data.PhotoURL
+                      photoURL: res.data.photoURL
                     };
                   })
               })
@@ -134,10 +135,18 @@ export const store = new Vuex.Store({
     updateUserProfileImageAction (state, payload) {
       const updatedUserObj = { PhotoURL: payload }
       userData.updateProfileImage(state.user.uid, updatedUserObj)
-        .then().catch(err => console.error(err));
+        .then(() => {
+          state.user.photoURL = payload;
+        }).catch(err => console.error(err));
     },
     userProfileImageAfterUpload (state, payload) {
       state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+    },
+    showFamilyMemberBubbles (state, payload) {
+        state.whoIsInMyFamily = state.whoIsInMyFamily + 1; 
+    },
+    increaseGroceryListKey (state, payload) {
+        state.keyForGroceryList = state.keyForGroceryList + 1;
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -167,6 +176,7 @@ export const store = new Vuex.Store({
                 FirstName: payload.firstName,
                 LastName: payload.lastName
               });
+              commit('userProfileImageAfterUpload');
             }).catch(err => alert(err.message));
           } else {
             alert('Please enter a valid email address and password');
@@ -217,6 +227,7 @@ export const store = new Vuex.Store({
       // needs to receive payload from user input catpure in Header.vue
       upadteUserProfile: ({ commit }, payload) => {
         commit('UpdateOrAddUserName', payload);
+        commit('showFamilyMemberBubbles');
       },
       updateUserProfileImage: ({ commit }, payload) => {
         commit('updateUserProfileImageAction', payload);
@@ -236,6 +247,15 @@ export const store = new Vuex.Store({
         userData.deleteUser(payload.uid)
           .then()
           .catch(err => console.error(err));
-      }
+      },
+     showFamilyMembers: ({ commit }, payload) => {
+        commit('showFamilyMemberBubbles');
+     },
+     causeRefreshOfFamilyBubbles: ({ commit }, payload) => {
+        commit('updateFamilyBubbles');
+     },
+     increaseKeyCountGroceryList: ({ commit }, payload) => {
+        commit('increaseGroceryListKey');
+     }
     }
 });

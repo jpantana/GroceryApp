@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const baseUrl = "https://localhost:44349";
+const baseUrl = "https://sweetcarts.azurewebsites.net"
+// const baseUrl = "https://localhost:5001";
+// const baseUrl = "https://localhost:44349";
 
 const getAllUsers = () => new Promise((resolve, reject) => {
     axios.get(`${baseUrl}/user`).then(result => resolve(result.data))

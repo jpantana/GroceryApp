@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const baseUrl = "https://localhost:44349";
+const baseUrl = "https://sweetcarts.azurewebsites.net";
+// const baseUrl = "https://localhost:5001";
+// const baseUrl = "https://localhost:44349";
 
 const sendInvite = newInvite => axios.post(`${baseUrl}/invitation`,  newInvite);
 

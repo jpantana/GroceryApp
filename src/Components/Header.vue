@@ -69,9 +69,6 @@
                 </div>
             </span>
             <div class="invitesDiv" v-show="invites.length > 0">
-                <!-- <ul>
-                    <li :key="`${i}invite`" v-for="(invite, i) in invites">{{ invite.fromId }}</li>
-                </ul> -->
                 <font-awesome-icon
                     icon="flag"
                     id="linkToJoinFamily"
@@ -160,7 +157,8 @@
                             if (this.invites.length == 1) {
                                 // Deletes the invitation
                                 invitationData.deleteInvitation(this.invites[0].id)
-                                    .then().catch(err => console.error(err));
+                                    .then(() => this.$state.dispatch('showFamilyMemberBubbles'))
+                                    .catch(err => console.error(err));
                              }
                     }).catch(err => console.error(err));
                 } else if (!bool) {
