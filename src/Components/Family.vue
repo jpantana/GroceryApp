@@ -37,15 +37,16 @@
 <script>
 import usersData from '../helpers/data/usersData.js';
 import invitationData from '../helpers/data/invitationData.js';
+import familyData from '../helpers/data/familyData.js';
 import 'animate.css';
 export default {
     data() {
         return {
             familyMembers: [],
             emailToInvite: '',
+            family: [],
         }
     },
-    props: ['family'],
     methods: {
         addBtnClicked(e) {
             // code here. axios send link
@@ -75,7 +76,13 @@ export default {
         },
     },
     created() {
-
+        setTimeout(() => {
+            const famId = this.$store.state.user.familyId;
+            familyData.getMyFamily(famId)
+                .then((res) => {
+                    this.family = res;
+                }).catch(err => console.error('not getting my family', err));  
+        }, 3000);  
     }
 }
 </script>

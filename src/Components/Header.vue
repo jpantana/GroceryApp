@@ -69,9 +69,6 @@
                 </div>
             </span>
             <div class="invitesDiv" v-show="invites.length > 0">
-                <!-- <ul>
-                    <li :key="`${i}invite`" v-for="(invite, i) in invites">{{ invite.fromId }}</li>
-                </ul> -->
                 <font-awesome-icon
                     icon="flag"
                     id="linkToJoinFamily"

@@ -2,7 +2,6 @@
     <div class="containerDiv">
         <div class="sideNavHome animated fadeIn">
             <app-family
-                :family="this.$store.state.family"
                 :key="this.$store.state.whoIsInMyFamily"
             ></app-family>
         </div>
@@ -39,17 +38,8 @@
             appUserProfile: UserProfile,
             appFamily: Family
         },
-        methods: {
-            // getProfilePic() {
-            //     this.profilePic = this.$store.state.user.photoURL;
-                
-            // }
-        },
         mounted() {
             this.$store.dispatch('showFamilyMembers');
-            // setTimeout(() => {
-            //     this.getProfilePic()
-            // },3000);
         }
     }
 </script>

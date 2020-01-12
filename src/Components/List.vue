@@ -7,6 +7,7 @@
             ></app-item-create>
 
             <app-grocery-list
+                :key="this.$store.state.keyForGroceryList"
                 @newSelectedList="selected"
                 @newGroceryList="receiveNewGroceryList"
                 @deleteGroceryListAndItms="deleteGroceryListAndItems"
@@ -140,7 +141,6 @@
                 groceryListData.makeGroceryList(item)
                     .then((res) => {
                         this.getGroceryLists();
-                        // this.propmtCreateList();
                     }).catch(err => console.error(err));
             }
         },

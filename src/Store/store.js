@@ -24,7 +24,7 @@ export const store = new Vuex.Store({
     },
     keyForUserProfilePicture: 1,
     whoIsInMyFamily: 1,
-    family: [],
+    keyForGroceryList: 1
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -143,14 +143,10 @@ export const store = new Vuex.Store({
       state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
     },
     showFamilyMemberBubbles (state, payload) {
-      setTimeout(() => {
-        const famId = state.user.familyId;
-          familyData.getMyFamily(famId)
-            .then((res) => {
-                state.family = res;
-                state.whoIsInMyFamily = state.whoIsInMyFamily + 1; 
-            }).catch(err => console.error('not getting my family', err));  
-      }, 3000);
+        state.whoIsInMyFamily = state.whoIsInMyFamily + 1; 
+    },
+    increaseGroceryListKey (state, payload) {
+        state.keyForGroceryList = state.keyForGroceryList + 1;
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -231,6 +227,7 @@ export const store = new Vuex.Store({
       // needs to receive payload from user input catpure in Header.vue
       upadteUserProfile: ({ commit }, payload) => {
         commit('UpdateOrAddUserName', payload);
+        commit('showFamilyMemberBubbles');
       },
       updateUserProfileImage: ({ commit }, payload) => {
         commit('updateUserProfileImageAction', payload);
@@ -256,6 +253,9 @@ export const store = new Vuex.Store({
      },
      causeRefreshOfFamilyBubbles: ({ commit }, payload) => {
         commit('updateFamilyBubbles');
+     },
+     increaseKeyCountGroceryList: ({ commit }, payload) => {
+        commit('increaseGroceryListKey');
      }
     }
 });
