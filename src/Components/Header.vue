@@ -137,6 +137,7 @@
                         this.invites = res;
                         if (this.invites.length > 1) {
                             // loop over invites and display options to this user
+                            // for now you'll only see most recent invite
                         } else if (this.invites.length ==1 ) {
                             const id = this.invites[0].fromId;
                             this.famId = this.invites[0].familyId;

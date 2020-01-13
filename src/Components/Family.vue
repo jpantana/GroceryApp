@@ -38,6 +38,7 @@
 import usersData from '../helpers/data/usersData.js';
 import invitationData from '../helpers/data/invitationData.js';
 import familyData from '../helpers/data/familyData.js';
+import { mapState } from 'vuex';
 import 'animate.css';
 export default {
     data() {
@@ -75,14 +76,43 @@ export default {
             }
         },
     },
-    created() {
-        setTimeout(() => {
-            const famId = this.$store.state.user.familyId;
-            familyData.getMyFamily(famId)
-                .then((res) => {
-                    this.family = res;
-                }).catch(err => console.error('not getting my family', err));  
-        }, 3000);  
+    computed: {
+        // ...mapState(['user']),
+    },
+    wactch: {
+        // NOT WORKING
+        // 'user': (newVal, oldVal) => {
+        //     console.error(newVal, oldVal);
+        //     this.myFamily(user.familyId);
+        // }
+    },
+    methods: {
+        // NOT CALLED
+        // myFamily(famId) {
+        //     familyData.getMyFamily(famId)
+        //         .then((res) => {
+        //             this.family = res;
+        //         }).catch(err => console.error('not getting my family', err));
+        // }   
+    },
+    mounted() {
+        // console.error(this.user, 'user in created');
+        this.$store.dispatch('getFamily')
+            .then(() => {
+                console.error('called dispatch getFamily');
+                this.family = this.$store.state.family;
+                // console.error(this.$store.state);
+                // console.error(this.$store.state.family);
+            }).catch();
+
+        // hacky
+        // setTimeout(() => {
+        //     const famId = this.$store.state.user.familyId;
+        //     familyData.getMyFamily(famId)
+        //         .then((res) => {
+        //             this.family = res;
+        //         }).catch(err => console.error('not getting my family', err));  
+        // }, 3000);  
     }
 }
 </script>

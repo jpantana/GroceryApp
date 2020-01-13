@@ -24,7 +24,18 @@ export const store = new Vuex.Store({
     },
     keyForUserProfilePicture: 1,
     whoIsInMyFamily: 1,
-    keyForGroceryList: 1
+    keyForGroceryList: 1,
+    keyForInviteFlag: 1,
+    // trying to use async for Family.vue
+    family: [],
+  },
+  //~~~~~~~~~~~~~~~~~ GETTERS SECTION ~~~~~~~~~~~~~~~~~~~~
+  getters: {
+    user: (state) => {
+      this.actions.stateIsInUpdateKeys();
+      return state.user;
+    }
+    // using mapState to accomplish (which auto creates getters)
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -147,6 +158,14 @@ export const store = new Vuex.Store({
     },
     increaseGroceryListKey (state, payload) {
         state.keyForGroceryList = state.keyForGroceryList + 1;
+    },
+    updateFamilyMembers (state, payload) {
+      const famId = state.user.familyId;
+      console.error(state);
+       familyData.getMyFamily(famId)
+          .then((res) => {
+              state.family = res;
+          }).catch(err => console.error('not getting my family', err));
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -222,6 +241,7 @@ export const store = new Vuex.Store({
                       Id: resp[0].id,
                       PhotoURL: resp[0].photoURL
                     });
+                    // call the stateIsIn action
               }).catch(err => console.error(err, 'no user on refresh'));
       },
       // needs to receive payload from user input catpure in Header.vue
@@ -251,11 +271,18 @@ export const store = new Vuex.Store({
      showFamilyMembers: ({ commit }, payload) => {
         commit('showFamilyMemberBubbles');
      },
-     causeRefreshOfFamilyBubbles: ({ commit }, payload) => {
-        commit('updateFamilyBubbles');
-     },
      increaseKeyCountGroceryList: ({ commit }, payload) => {
         commit('increaseGroceryListKey');
-     }
+     },
+     // getter in store calls this action
+     stateIsInUpdateKeys: ({ commit }, payload) => {
+        // Header flag invites, family member bubbles, profile pic are currently using setTimeout
+        console.log(this.state.user, 'state is in');
+        commit();
+     },
+     getFamily: ({ commit }, payload) => {
+        console.error('getFamily');
+        commit('updateFamilyMembers');
     }
+  },
 });

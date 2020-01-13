@@ -62,6 +62,7 @@
                     storageRef.snapshot.ref.getDownloadURL().then((url)=>{
                         this.picture = url;
                         this.$store.dispatch('updateUserProfileImage', url);
+                        // Ok w this setTimeout
                         setTimeout(() => {
                             this.ifPicture=false;
                         },1500);
