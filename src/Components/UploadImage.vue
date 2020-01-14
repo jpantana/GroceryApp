@@ -65,7 +65,7 @@
                         // Ok w this setTimeout
                         setTimeout(() => {
                             this.ifPicture=false;
-                        },1500);
+                        },1800);
                         this.changeBtn = !this.changeBtn;
                     });
                 })

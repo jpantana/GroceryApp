@@ -1,6 +1,6 @@
 <template>
     <nav>
-    <!-- MODAL 1 HERE -->
+    <!-- MODAL HERE -->
         <b-modal ref="my-modal" hide-footer title="Tell us more about yourself...">
             <app-header-modal
                 :updateUser="updateUser"
@@ -8,16 +8,6 @@
                 @closeModal="updateUserProfileBtn"
             >
             </app-header-modal>
-        </b-modal>
-    <!-- MODAL 1 HERE -->
-        <b-modal ref="my-modal2" hide-footer title="You've been invited to share your lists">
-            <div class="divContainsModal2">
-                <p>You've been invited to share lists with {{ this.otherUser.firstName }} {{ this.otherUser.lastName }}</p>
-                <div class="divAcceptDecline">
-                    <button @click="acceptOrDecline(true)" class="btn accept">Accept</button>
-                    <button @click="acceptOrDecline(false)" class="btn decline">Decline</button>
-                </div>
-            </div>
         </b-modal>
         <div  id="myNav">
         <!-- BRAND -->
@@ -68,29 +58,22 @@
                     <p class="usersName">{{ this.$store.state.user.firstName }}</p>
                 </div>
             </span>
-            <div class="invitesDiv" v-show="invites.length > 0">
-                <font-awesome-icon
-                    icon="flag"
-                    id="linkToJoinFamily"
-                    class="faFlag animated bounceIn flagIcon"
-                    @click="showInvites"
-                ></font-awesome-icon>
-            </div>
+                <app-invite-flag 
+                    :key="this.$store.state.keyForInviteFlag"
+                ></app-invite-flag>
         </div>
     </nav>
 </template>
 
 <script>
     import firebase from 'firebase/app';
-    import invitationData from '../helpers/data/invitationData.js';
-    import { store } from 'vuex';
-    import userData from '../helpers/data/usersData.js';
     import { mapActions } from 'vuex';
     import { router } from '../main.js';
     import 'animate.css';
     import 'jquery';
     import HeaderDropdown from './HeaderDropdown.vue';
     import HeaderModal from './HeaderModal.vue';
+    import InviteFlag from './InviteFlag.vue';
     import 'animate.css';
 
     export default {
@@ -100,16 +83,13 @@
                 updateUser: {
                     firstName: null,
                     lastName: null
-                },
-                recipient: '',
-                invites: [],
-                otherUser: '',
-                famId: '',
+                }
             }
         },
         components: {
             appDropdown: HeaderDropdown,
-            appHeaderModal: HeaderModal
+            appHeaderModal: HeaderModal,
+            appInviteFlag: InviteFlag
         },
         methods: {
             ...mapActions([
@@ -128,63 +108,21 @@
                 firebase.auth().signOut()
                     .then(() => {
                         this.$store.dispatch('signOut');
-                        router.push({ name: 'myLogin', path: '/login' })
+                        router.push({ name: 'myLogin', path: '/login' });
                     });
-            },
-            listenForInvites() {
-                invitationData.getInvites(this.recipient)
-                    .then((res) => {
-                        this.invites = res;
-                        if (this.invites.length > 1) {
-                            // loop over invites and display options to this user
-                            // for now you'll only see most recent invite
-                        } else if (this.invites.length ==1 ) {
-                            const id = this.invites[0].fromId;
-                            this.famId = this.invites[0].familyId;
-                            userData.getSingleUserById(id)
-                                .then(resp => this.otherUser = resp[0])
-                                .catch(err => console.error(err));
-                        }
-                    }).catch(err => console.error(err));
-            },
-            showInvites() {
-                this.$refs['my-modal2'].toggle('#linkToJoinFamily');
-            },
-            acceptOrDecline(bool) {
-                if (bool) {
-                    // code here updates user and deletes invite
-                    userData.changeFamily(this.recipient, this.famId)
-                        .then((res) => {
-                            if (this.invites.length == 1) {
-                                // Deletes the invitation
-                                invitationData.deleteInvitation(this.invites[0].id)
-                                    .then(() => this.$state.dispatch('showFamilyMemberBubbles'))
-                                    .catch(err => console.error(err));
-                             }
-                    }).catch(err => console.error(err));
-                } else if (!bool) {
-                    // deletes the invitation
-                    if (this.invites.length == 1) {
-                        invitationData.deleteInvitation(this.invites[0].id)
-                            .then().catch(err => console.error(err));
-                        }
-                }
-                this.$refs['my-modal2'].toggle('#linkToJoinFamily');
             }
         },
         created() {
             // check for firebase user and dispatch a login action for axios comparison
+            // BUG: causes refresh to run regardless
             firebase.auth().onAuthStateChanged((fbUser) => {
                 if (fbUser) {
                     this.$store.dispatch('rebuildStateAfterRefresh', fbUser);
+                } else {
+                    // cause router to logout screen
+                    router.push({ name: 'myLogin', path: '/login' });
                 }
             });
-        },
-        mounted() {
-            setTimeout(() => {
-                this.recipient = this.$store.state.user.id;
-                this.listenForInvites();
-            },2500);
         }
     }
 </script>
@@ -335,60 +273,8 @@
                 }
             }
         }
-        .invitesDiv {
-            width: 20px;
-            height: auto;
-            margin-right: 5px;
-            &:hover {
-                transform: scale(1.2);
-                transition: .4s;
-            }
-            .flagIcon {
-                margin-top: 9px;
-                color: $secondBlue;
-                &:hover {
-                    cursor: pointer;
-                    transform: scale(1.2);
-                    transition: .4s;
-                    color: $secondBlueHover;
-                }
-            }
-        }
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// MODAL
-.divContainsModal2 {
-    .divAcceptDecline {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        .accept {
-            border: 1px solid $mainBlue;
-            margin-right: 0;
-            border-radius: 12px 0 0 12px;
-            background-color: $mainBlue;
-            color: $fontColorLight;
-            width: 5em;
-            &:hover {
-                transition: .7s;
-                transform: scale(1.05);
-            }
-        }
-        .decline {
-            border: 1px solid $secondBlue;
-            margin-left: 0;
-            border-radius: 0px 12px 12px 0px;
-            background-color: $secondBlue;
-            color: $fontColorLight;
-            width: 5em;
-            &:hover {
-                transition: .7s;
-                transform: scale(1.05);
-            }
-        }
-    }
-}
-
 
 
 // MOBILE
