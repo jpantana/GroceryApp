@@ -39,6 +39,7 @@
             appFamily: Family
         },
         mounted() {
+            // causes Family component to render
             this.$store.dispatch('showFamilyMembers');
         }
     }

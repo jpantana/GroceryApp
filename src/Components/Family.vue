@@ -39,6 +39,7 @@ import usersData from '../helpers/data/usersData.js';
 import invitationData from '../helpers/data/invitationData.js';
 import familyData from '../helpers/data/familyData.js';
 import 'animate.css';
+import { async } from 'q';
 export default {
     data() {
         return {
@@ -74,15 +75,15 @@ export default {
                     }).catch(err => console.error(err, 'error at getSingleUserByEmailLookup'));
             }
         },
+        updateFamily() {
+            setTimeout(() => this.family = this.$store.state.family,1000);                          
+        }
     },
-    created() {
-        setTimeout(() => {
-            const famId = this.$store.state.user.familyId;
-            familyData.getMyFamily(famId)
-                .then((res) => {
-                    this.family = res;
-                }).catch(err => console.error('not getting my family', err));  
-        }, 3000);  
+    mounted() {
+        this.$store.dispatch('getFamily')
+            .then(() => {
+                this.updateFamily();
+            }).catch();     
     }
 }
 </script>

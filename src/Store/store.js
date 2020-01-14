@@ -24,7 +24,9 @@ export const store = new Vuex.Store({
     },
     keyForUserProfilePicture: 1,
     whoIsInMyFamily: 1,
-    keyForGroceryList: 1
+    keyForGroceryList: 1,
+    keyForInviteFlag: 1,
+    family: [],
   },
   //~~~~~~~~~~~~~~~~ MUTATIONS SECTION ~~~~~~~~~~~~~~~~~~~
   mutations: {
@@ -71,6 +73,9 @@ export const store = new Vuex.Store({
                       id: res.data.id,
                       photoURL: res.data.photoURL
                     };
+                    state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+                    state.whoIsInMyFamily = state.whoIsInMyFamily + 1;            
+                    state.keyForInviteFlag = state.keyForInviteFlag + 1;            
                   })
               })
               .catch(err => console.error('no family created and/or user', err)); // two catch's seemed to make for duplicate data posts
@@ -89,6 +94,9 @@ export const store = new Vuex.Store({
                   id: res[0].id,
                   photoURL: res[0].PhotoURL
                 };
+                state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+                state.whoIsInMyFamily = state.whoIsInMyFamily + 1;
+                state.keyForInviteFlag = state.keyForInviteFlag + 1;       
               })
               .catch(err => console.error(err));
           }
@@ -115,6 +123,12 @@ export const store = new Vuex.Store({
         id: payload.Id,
         photoURL: payload.PhotoURL
       };
+      state.keyForUserProfilePicture = state.keyForUserProfilePicture + 1;
+      state.whoIsInMyFamily = state.whoIsInMyFamily + 1;
+      state.keyForInviteFlag = state.keyForInviteFlag + 1; 
+      // TRY AND INCORP ROUTE IN HERE TO CAUSE ONLY ACTIVE ROUTES TO RERENDER
+      // keyForGroceryList: 1,
+      // keyForInviteFlag
     },
     // UPDATE/ADD USER NAME TO EXISTING USER (works correctly and maintains state)
     UpdateOrAddUserName (state, payload) {
@@ -147,6 +161,16 @@ export const store = new Vuex.Store({
     },
     increaseGroceryListKey (state, payload) {
         state.keyForGroceryList = state.keyForGroceryList + 1;
+    },
+    // gets dispatched in family on mounted hook
+    updateFamilyMembers (state, payload) {
+      familyData.getMyFamily(state.user.familyId)
+        .then((res) => {
+            state.family = res;
+        }).catch(err => console.error('not getting my family', err));
+    },
+    updateInviteFlags (state, payload) {
+      this.keyForInviteFlag = this.keyForInviteFlag + 1;
     }
   },
   //~~~~~~~~~~~~~~~~ ACTIONS SECTION ~~~~~~~~~~~~~~~~~~~
@@ -222,6 +246,7 @@ export const store = new Vuex.Store({
                       Id: resp[0].id,
                       PhotoURL: resp[0].photoURL
                     });
+                    // call the stateIsIn action
               }).catch(err => console.error(err, 'no user on refresh'));
       },
       // needs to receive payload from user input catpure in Header.vue
@@ -239,7 +264,7 @@ export const store = new Vuex.Store({
         // If no grocerylist is assocated w user, we must FIRST create that table, then take its PK and pass it as our remaing FK for new Item
         itemsData.addItem(payload)
           .then((resp) => {
-
+            // code goes here
           })
           .catch(err => console.error(err));
       },
@@ -248,14 +273,25 @@ export const store = new Vuex.Store({
           .then()
           .catch(err => console.error(err));
       },
-     showFamilyMembers: ({ commit }, payload) => {
+      showFamilyMembers: ({ commit }, payload) => {
+        // causes key to increase and rerender component
         commit('showFamilyMemberBubbles');
-     },
-     causeRefreshOfFamilyBubbles: ({ commit }, payload) => {
-        commit('updateFamilyBubbles');
-     },
-     increaseKeyCountGroceryList: ({ commit }, payload) => {
+      },
+      increaseKeyCountGroceryList: ({ commit }, payload) => {
+        // causes key to increase and rerender component
         commit('increaseGroceryListKey');
-     }
-    }
+      },
+      // getter in store calls this action
+      // stateIsInUpdateKeys: ({ commit }, payload) => {
+      //   Header flag invites, family member bubbles, profile pic are currently using setTimeout
+      //   commit();
+      // },
+      // gets dispatched in family on mounted hook
+      getFamily: ({ commit }, payload) => {
+        commit('updateFamilyMembers');
+      },
+      updateInviteFlageKye: ({ commit }, payload) => {
+        commit('updateInviteFlags');
+      }
+    },
 });

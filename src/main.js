@@ -22,9 +22,9 @@ Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
+  store,
   routes,
   mode: 'history',
-  store
 });
 
 router.beforeEach((to, from, next) => {
