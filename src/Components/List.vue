@@ -163,6 +163,7 @@
         justify-content: center;
         margin: auto;
         margin-top: 0;
+        padding-bottom: 2em;
         .divWrapper {
             margin: auto;
             max-width: 35em;
