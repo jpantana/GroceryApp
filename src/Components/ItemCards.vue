@@ -36,7 +36,8 @@
         max-width: 28em;
         margin: auto;
         // background: $bottomNavColor;
-        height: 32em;
+        min-height: 32em;
+        overflow: scroll;
         .itemsUl {
             max-width: 25em;
             margin: auto;
